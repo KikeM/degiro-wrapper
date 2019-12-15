@@ -1,0 +1,6 @@
+matplotlib
+seaborn
+quantstats
+tqdm
+pandas
+numpy
