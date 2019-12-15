@@ -73,9 +73,7 @@ def get_int_account(session_id = None):
     sess = requests.Session()
     
     _payload = {'sessionId': session_id}
-    
-    print(_payload)
-    
+        
     _response = sess.get(url    = url_info_client, 
                          params = _payload)
     
