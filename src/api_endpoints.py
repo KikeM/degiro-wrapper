@@ -12,29 +12,15 @@ url_info_client = 'https://trader.degiro.nl/pa/secure/client'
 # Positions
 ###########
 url_positions  = 'https://trader.degiro.nl/reporting/secure/v3/positionReport/xls'
-
 url_positions += '?intAccount={int_account}'
-
 url_positions += '&sessionId={session_id}'
 url_positions += '&country=ES'
 url_positions += '&lang=es'
 url_positions += '&toDate={day}%2F{month}%2F{year}'
 
-###########
-# Positions
-###########
-url_positions  = 'https://trader.degiro.nl/reporting/secure/v3/positionReport/xls'
-
-url_positions += '?intAccount={int_account}'
-
-url_positions += '&sessionId={session_id}'
-url_positions += '&country=ES'
-url_positions += '&lang=es'
-url_positions += '&toDate={day}%2F{month}%2F{year}'
-
-###########
-# Positions
-###########
+##############
+# Cash Account
+##############
 url_account  = 'https://trader.degiro.nl/reporting/secure/v3/cashAccountReport/xls'
 url_account +='?intAccount={int_account}'
 url_account +='&sessionId={session_id}'
