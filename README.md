@@ -1,12 +1,13 @@
 # Welcome to the Degiro Wrapper
-Degiro broker wrapper and *soon* portfolio valuator.
+Degiro broker wrapper and portfolio valuator.
+
+**Currently under heavy changes, stable releases will be put up soon**.
 
 # How to install
 
 ```bash
 pip install -r requirements.txt
 ```
-
 
 ## How to use
 
