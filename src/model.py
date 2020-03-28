@@ -1,31 +1,28 @@
-def compute_weights(input_df, copy=True):
+def compute_weights(amounts, isin_cash = None, regex = None):
     """
-    Compute the weights assuming all positions are long.
-    
+    Compute positions weights.
+
     Parameters
     ----------
-    input_df: pd.DataFrame
-        - Index: DatetimeIndex
-        - Columns: ['amount', ...]
-        - Values: amount in cash
-    
+    amounts: pd.DataFrame
+
+    isin_cash: str
+
+    regex: str
+
     Returns
     -------
-    df: pd.DataFrame
-        A **copy** of input_df with an extra column, 'weight'
+    pd.DataFrame
     """
-    if copy == True:
-        df = input_df.copy()
-    else:
-        df = input_df
+    _amount_df = amounts.copy()
     
-    for date in df.index:
-    
-        assets_value = df.loc[date, 'amount'].sum()
+    # Apply filters
+    if isin_cash is not None:
+        _amount_df = _amount_df.drop(columns=isin_cash)
+    if regex is not None:
+        _amount_df = _amount_df.filter(regex = regex)
 
-        df.loc[date, 'weight'] = assets_value
+    # Compute weights over the remaining assets
+    weights_df = _amount_df.div(_amount_df.sum(axis=1), axis = 'index')
 
-        _amounts = df.loc[date, 'amount']
-        df.loc[date, 'weight'] = _amounts / df.loc[date, 'weight']
-    
-    return df
+    return weights_df
