@@ -1,0 +1,8 @@
+pandas
+numpy
+matplotlib
+tqdm
+requests
+xlrd
+tabulate
+yfinance

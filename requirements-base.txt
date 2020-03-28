@@ -1,0 +1,10 @@
+jupyterlab
+jupyter
+QuantStats
+tqdm
+xlrd
+pandas
+numpy
+requests
+matplotlib
+seaborn
