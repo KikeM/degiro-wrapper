@@ -1,4 +1,4 @@
-from api_endpoints import url_login, url_info_client, url_positions
+from api_endpoints import url_login, url_info_client, url_positions, url_account
 import requests
 import getpass
 import json
@@ -141,3 +141,40 @@ def download_positions(calendar, path, data, filename_template = 'positions_%Y%m
                                             year        = _date.strftime('%Y'))
 
         urllib.request.urlretrieve(url_formated, path / _filename)
+
+def download_cashflows(user_data, date_start, date_end, path_account):
+    """
+    Download positions and cash flows.
+
+    Parameters
+    ----------
+    user_date: dict
+
+    date_start: str or Datetime-like
+
+    date_end: str or Datetime-like
+
+    path_account: Path-like to folder
+
+    Returns
+    -------
+    path_account: Path-like
+    """
+    # Parse dates
+    date_start = pd.to_datetime(date_start)
+    date_end   = pd.to_datetime(date_end)
+
+    # Format download URL
+    url_account_formated = url_account.format(int_account = user_data['intAccount'], 
+                                            session_id  = user_data['sessionId'], 
+                                            day_i       = date_start.strftime('%d'),
+                                            month_i     = date_start.strftime('%m'),
+                                            year_i      = date_start.strftime('%Y'),
+                                            day_f       = date_end.strftime('%d'),
+                                            month_f     = date_end.strftime('%m'),
+                                            year_f      = date_end.strftime('%Y'))
+
+    # Download account file
+    path_account, _ = urllib.request.urlretrieve(url_account_formated, path_account / 'Account.xls')
+
+    return path_account
