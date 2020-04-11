@@ -1,6 +1,11 @@
-jupyterlab==2.0.1
+jupyter
+notebook
+jupyterlab
 pipdeptree==0.13.2
 QuantStats==0.0.25
 tqdm==4.43.0
-wheel==0.34.2
 xlrd==1.2.0
+pandas
+numpy
+matplotlib
+plotly
