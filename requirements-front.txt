@@ -4,6 +4,5 @@ jupyterlab
 matplotlib
 plotly
 voila
-voila-gridstack
-voila-material
-jupyter_dashboards
+voila-gridstack   # isn't persistent
+jupyter_dashboards  # doesn't work properly
