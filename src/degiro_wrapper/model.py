@@ -1,13 +1,10 @@
 def compute_weights(amounts, isin_cash = None, regex = None):
-    """
-    Compute positions weights.
+    """Compute positions weights.
 
     Parameters
     ----------
     amounts: pd.DataFrame
-
     isin_cash: str
-
     regex: str
 
     Returns
@@ -15,7 +12,7 @@ def compute_weights(amounts, isin_cash = None, regex = None):
     pd.DataFrame
     """
     _amount_df = amounts.copy()
-    
+
     # Apply filters
     if isin_cash is not None:
         _amount_df = _amount_df.drop(columns=isin_cash)

@@ -1,7 +1,7 @@
 
 import pandas as pd
 import urllib
-from api_endpoints import url_account
+from .api_endpoints import url_account
 
 def positions_xls_to_df(path, isin_cash):
     """
@@ -22,16 +22,16 @@ def positions_xls_to_df(path, isin_cash):
     df = pd.DataFrame(columns=columnas)
 
     for file in path.glob('pos_*.xls'):
-        
+
         # Read file
         df_day = pd.read_excel(file)
-        
+
         # Get positions date
         df_day['Fecha'] = file.stem.split('_')[-1]
-        
+
         # Append to dataframe
         df = df.append(df_day, sort=False)
-        
+
     df['Fecha'] = pd.to_datetime(df['Fecha'])
 
     df = df.reset_index(drop=True)
@@ -72,10 +72,10 @@ def positions_raw_to_clean(raw_positions):
         shares_df: number of participations
         nav_df: Net Assets Value, position / shares value
         returns_df: NAV returns
-    
+
     Notes
     -----
-    It does not contain the returns of the cash position. 
+    It does not contain the returns of the cash position.
     """
     amount_df  = raw_positions.pivot(index = 'date', columns='ISIN', values = 'amount')
     prices_df  = raw_positions.pivot(index = 'date', columns='ISIN', values = 'price')
@@ -89,10 +89,10 @@ def positions_raw_to_clean(raw_positions):
 
     # Put on a business day basis
     amount_df  = amount_df.asfreq('B')
-    prices_df  = prices_df.asfreq('B') 
-    shares_df  = shares_df.asfreq('B') 
-    nav_df     = nav_df.asfreq('B') 
-    returns_df = returns_df.asfreq('B') 
+    prices_df  = prices_df.asfreq('B')
+    shares_df  = shares_df.asfreq('B')
+    nav_df     = nav_df.asfreq('B')
+    returns_df = returns_df.asfreq('B')
 
     return amount_df, prices_df, shares_df, nav_df, returns_df
 
@@ -113,10 +113,10 @@ def generate_cashflows(path_account, isin_cash):
     """
     # Read and parse
     df_account = pd.read_excel(path_account)
-    df_account = df_account.rename(columns={'Variación':'ccyDelta', 
-                                            'Unnamed: 8':'delta', 
-                                            'Saldo':'ccyAmount', 
-                                            'Unnamed: 10':'amount', 
+    df_account = df_account.rename(columns={'Variación':'ccyDelta',
+                                            'Unnamed: 8':'delta',
+                                            'Saldo':'ccyAmount',
+                                            'Unnamed: 10':'amount',
                                             'Fecha valor':'date'})
 
     df_account['date'] = pd.to_datetime(df_account['date'], dayfirst=True)

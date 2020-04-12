@@ -1,0 +1,11 @@
+README.md
+setup.py
+src/degiro_wrapper/__init__.py
+src/degiro_wrapper/api_endpoints.py
+src/degiro_wrapper/api_methods.py
+src/degiro_wrapper/model.py
+src/degiro_wrapper/preprocess.py
+src/degiro_wrapper.egg-info/PKG-INFO
+src/degiro_wrapper.egg-info/SOURCES.txt
+src/degiro_wrapper.egg-info/dependency_links.txt
+src/degiro_wrapper.egg-info/top_level.txt

@@ -7,7 +7,7 @@ import requests
 import pandas as pd
 import pathlib
 
-from api_endpoints import url_account, url_info_client, url_login, url_positions
+from .api_endpoints import url_account, url_info_client, url_login, url_positions
 
 
 def get_config(fname):
@@ -151,6 +151,9 @@ def download_positions(calendar, path, data, filename_template="positions_%Y%m%d
     for _date in tqdm.tqdm(calendar):
 
         _filename = _date.strftime(filename_template) + ".xls"
+        _file = path / _filename
+        if _file.exists(): continue  # early stop
+
 
         url_formated = url_positions.format(
             int_account=data["intAccount"],
@@ -160,7 +163,7 @@ def download_positions(calendar, path, data, filename_template="positions_%Y%m%d
             year=_date.strftime("%Y"),
         )
 
-        urllib.request.urlretrieve(url_formated, path / _filename)
+        urllib.request.urlretrieve(url_formated, _file)
 
 
 def download_cashflows(user_data, date_start, date_end, path_account):
