@@ -1,0 +1,9 @@
+jupyter
+notebook
+jupyterlab
+matplotlib
+plotly
+voila
+voila-gridstack
+voila-material
+jupyter_dashboards
