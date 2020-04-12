@@ -1,62 +1,59 @@
 # coding: utf-8
-
-import sys; sys.path.insert(0, "src")
 import matplotlib.pyplot as plt
 
+import datetime
 import pandas as pd
 import quantstats as qs
-
 from pathlib import Path
-from preprocess import (
-    generate_cashflows,
-    positions_raw_to_clean,
-    positions_xls_to_df,
-)
-from api_methods import download_cashflows, download_positions, get_login_data
-import datetime
-
+import degiro_wrapper as dw
 
 qs.extend_pandas()
 plt.style.use("ggplot")
 
-ISIN_CASH = "LU1959429272"
-CONFIG_DIR = "/Users/mmngreco/github/KikeM/degiro-wrapper/credentials"
+CONFIG_DIR = "/Users/mmngreco/github/mmngreco/degiro-wrapper/credentials"
+ISIN_CASH = dw.conventions.ISIN_CASH
 
-user_data = get_login_data(config=CONFIG_DIR)
-path = Path(r"./positions/").expanduser().absolute()
+user_data = dw.api_methods.get_login_data(config=CONFIG_DIR)
+path = Path(r"./assets/").expanduser().absolute()
 if not path.exists():
     path.mkdir()
 
-# Descargamos el excel con la composición del portfolio de cada día laborable:
 date_start = "20191001"
 date_end = datetime.datetime.today()
 calendar = pd.date_range(start=date_start, end=date_end, freq="B")
-download_positions(
+
+# TODO : Add early stop to dowload only new files
+dw.api_methods.download_positions(
     calendar=calendar,
     path=path,
     data=user_data,
     filename_template="pos_%Y%m%d",
 )
-positions_raw_df = positions_xls_to_df(path, isin_cash=ISIN_CASH)
-cleaned_data = positions_raw_to_clean(positions_raw_df)
+# =============================================================================
+positions_raw_df = dw.preprocess.positions_xls_to_df(
+    path, isin_cash=ISIN_CASH
+)
+cleaned_data = dw.preprocess.positions_raw_to_clean(positions_raw_df)
+
 amount_df, prices_df, shares_df, nav_df, rets_df = cleaned_data
 
 # =============================================================================
 # Cashflows
 
-path_account = download_cashflows(user_data, date_start, date_end, path)
-cashflows_df, cashflows_external_df = generate_cashflows(
+path_account = dw.api_methods.download_cashflows(
+    user_data, date_start, date_end, path
+)
+cashflows_df, cashflows_external_df = dw.preprocess.generate_cashflows(
     path_account=path_account, isin_cash=ISIN_CASH
 )
 
 # ??? : What means ss and why the following is needed
 cashflows_ss = cashflows_df.drop(columns=ISIN_CASH).sum(axis=1)
 cashflows_total_ss = (
-        cashflows_external_df
-        .set_index("date")["amount"]
-        .reindex(cashflows_ss.index, fill_value=0.0)
-        .add(cashflows_ss)
-    )
+    cashflows_external_df.set_index("date")["amount"]
+    .reindex(cashflows_ss.index, fill_value=0.0)
+    .add(cashflows_ss)
+)
 
 # =============================================================================
 # ### Compute cash returns
@@ -77,6 +74,7 @@ weights_df = amount_df.div(amount_df.sum(axis=1), axis="index").shift(1)
 weights_df = weights_df.rename(columns={ISIN_CASH: "Cash"})
 
 weights_df.plot.area(title="Weights")
+plt.show()
 weights_df.tail(1).T[weights_df.index[-1]].plot.pie()
 plt.show()
 
