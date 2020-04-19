@@ -1,0 +1,1 @@
+jupyter --sync sandobx.ipynb

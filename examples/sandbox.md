@@ -1,19 +1,19 @@
-# ---
-# jupyter:
-#   jupytext:
-#     formats: py,ipynb,md
-#     text_representation:
-#       extension: .py
-#       format_name: light
-#       format_version: '1.5'
-#       jupytext_version: 1.4.2
-#   kernelspec:
-#     display_name: Python 3
-#     language: python
-#     name: python3
-# ---
+---
+jupyter:
+  jupytext:
+    formats: py,ipynb,md
+    text_representation:
+      extension: .md
+      format_name: markdown
+      format_version: '1.2'
+      jupytext_version: 1.4.2
+  kernelspec:
+    display_name: Python 3
+    language: python
+    name: python3
+---
 
-# + extensions={"jupyter_dashboards": {"version": 1, "views": {"grid_default": {}, "report_default": {"hidden": false}}}}
+```python extensions={"jupyter_dashboards": {"version": 1, "views": {"grid_default": {}, "report_default": {"hidden": false}}}}
 # coding: utf-8
 import matplotlib.pyplot as plt
 
@@ -87,20 +87,26 @@ logging.info("Compute performance")
 
 weights_df = amount_df.div(amount_df.sum(axis=1), axis="index").shift(1)
 weights_df = weights_df.rename(columns={ISIN_CASH: "Cash"})
+```
 
-# + extensions={"jupyter_dashboards": {"version": 1, "views": {"grid_default": {}, "report_default": {"hidden": false}}}}
+```python extensions={"jupyter_dashboards": {"version": 1, "views": {"grid_default": {}, "report_default": {"hidden": false}}}}
 weights_df.plot.area(title="Weights")
+```
 
-# + extensions={"jupyter_dashboards": {"version": 1, "views": {"grid_default": {}, "report_default": {"hidden": false}}}}
+```python extensions={"jupyter_dashboards": {"version": 1, "views": {"grid_default": {}, "report_default": {"hidden": false}}}}
 weights_df.tail(1).T[weights_df.index[-1]].plot.pie();
+```
 
-# + extensions={"jupyter_dashboards": {"version": 1, "views": {"grid_default": {}, "report_default": {"hidden": false}}}}
+```python extensions={"jupyter_dashboards": {"version": 1, "views": {"grid_default": {}, "report_default": {"hidden": false}}}}
 pf_returns_ss = (rets_df * weights_df).dropna(how="all").sum(axis=1)
 pf_returns_ss.plot();
+```
 
-# + extensions={"jupyter_dashboards": {"version": 1, "views": {"grid_default": {}, "report_default": {"hidden": true}}}}
+```python extensions={"jupyter_dashboards": {"version": 1, "views": {"grid_default": {}, "report_default": {"hidden": true}}}}
 pf_equity_ss = pf_returns_ss.add(1).cumprod().sub(1)
 pf_equity_ss.plot();
-# -
+```
 
+```python
 
+```
