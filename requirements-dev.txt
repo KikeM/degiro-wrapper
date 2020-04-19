@@ -1,5 +1,7 @@
-pdbpp
 python-language-server[all]
+pdbpp
 flake8
 black
-pipdeptree==0.13.2
+pipdeptree
+ipython
+jupytext
