@@ -1,11 +1,13 @@
 import json
 import getpass
+import logging
+import pathlib
+import configparser
 import urllib.request
 
 import tqdm
 import requests
 import pandas as pd
-import pathlib
 
 from .api_endpoints import url_account, url_info_client, url_login, url_positions
 
@@ -22,10 +24,10 @@ def get_config(fname):
     -------
     config : config
     """
-    import configparser
     config = configparser.ConfigParser()
     _fname = pathlib.Path(fname).expanduser().absolute()
     config.read(_fname)
+    logging.info("Config file processed")
     return config
 
 
@@ -36,12 +38,12 @@ def get_session_id(username=None, password=None, config=False):
     ----------
     username: str
     password: str
+    config : config
 
     Returns
     -------
     str
     """
-    sess = requests.Session()
 
     # Prepare payload
     _payload = {"isPassCodeReset": False, "isRedirectToMobile": False}
@@ -50,33 +52,26 @@ def get_session_id(username=None, password=None, config=False):
     _need_password = password is None and not config
 
     if config:
-        config = get_config(config)
-        username = config["LOGIN"]["username"]
-        password = config["LOGIN"]["password"]
+        username = config["DEGIRO"]["username"]
+        password = config["DEGIRO"]["password"]
+        logging.info("Config loaded correctly for user: %s." % username)
 
     if _need_username or _need_password:
-
         _payload["username"] = input("Username: ")
         _payload["password"] = getpass.getpass()
-
     else:
-
         _payload["username"] = username
         _payload["password"] = password
 
     _payload = json.dumps(_payload)
-
-    #  Prepare header
     _header = {"content-type": "application/json"}
 
-    # Request access
-    _response = sess.post(url=url_login, headers=_header, data=_payload)
+    with requests.Session() as sess:
+        _response = sess.post(url=url_login, headers=_header, data=_payload)
 
     if _response.ok != True:
         print(_response.text)
         raise SystemExit("Unable to retrive intAccount value.")
-
-    sess.close()
 
     return _response.headers["Set-Cookie"].split(";")[0].split("=")[-1]
 
@@ -92,19 +87,17 @@ def get_int_account(session_id=None):
     -------
     int
     """
-    sess = requests.Session()
 
     _payload = {"sessionId": session_id}
 
-    _response = sess.get(url=url_info_client, params=_payload)
+    with requests.Session() as sess:
+        _response = sess.get(url=url_info_client, params=_payload)
 
     if _response.ok != True:
         print(_response.text)
         raise SystemExit("Unable to retrive intAccount value.")
 
     _config_dict = _response.json()
-
-    sess.close()
 
     return _config_dict["data"]["intAccount"]
 
