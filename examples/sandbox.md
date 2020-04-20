@@ -106,7 +106,7 @@ pf_returns_ss.plot();
 pf_equity_ss = pf_returns_ss.add(1).cumprod().sub(1)
 pf_equity_ss.plot();
 ```
-
 ```python
 
 ```
+

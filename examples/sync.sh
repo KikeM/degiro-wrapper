@@ -1,1 +1,1 @@
-jupyter --sync sandobx.ipynb
+jupytext --sync sandbox.ipynb
