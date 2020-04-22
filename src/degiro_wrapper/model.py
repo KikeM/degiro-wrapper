@@ -19,6 +19,6 @@ def compute_weights(amounts, isin_cash=None, regex=None):
         amounts = amounts.filter(regex=regex)
 
     # Compute weights over the remaining assets
-    weights = amounts.div(amounts.sum(axis=1), axis='index')
+    weights = amounts.div(amounts.sum(axis=1), axis="index")
 
     return weights

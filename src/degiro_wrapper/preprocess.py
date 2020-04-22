@@ -110,12 +110,12 @@ def positions_raw_to_clean(raw_positions):
     returns_df = returns_df.asfreq("B")
 
     out = dict(
-            amount=amount_df,
-            prices=prices_df,
-            shares=shares_df,
-            returns=returns_df,
-            nav=nav_df,
-        )
+        amount=amount_df,
+        prices=prices_df,
+        shares=shares_df,
+        returns=returns_df,
+        nav=nav_df,
+    )
 
     return out
 
@@ -172,9 +172,9 @@ def generate_cashflows(path_account, isin_cash):
     cashflows_df = cashflows_df.asfreq("B")
 
     out = dict(
-            account=df_account,
-            cashflows=cashflows_df,
-            cashflows_external=cashflows_external_df,
-        )
+        account=df_account,
+        cashflows=cashflows_df,
+        cashflows_external=cashflows_external_df,
+    )
 
     return out

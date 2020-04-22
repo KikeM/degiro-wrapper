@@ -9,7 +9,12 @@ import tqdm
 import requests
 import pandas as pd
 
-from .api_endpoints import url_account, url_info_client, url_login, url_positions
+from .api_endpoints import (
+    url_account,
+    url_info_client,
+    url_login,
+    url_positions,
+)
 
 
 def get_config(fname):
@@ -69,8 +74,8 @@ def get_session_id(username=None, password=None, config=False):
     with requests.Session() as sess:
         _response = sess.post(url=url_login, headers=_header, data=_payload)
 
-    if _response.ok != True:
-        print(_response.text)
+    if not _response.ok:
+        logging.error(_response.text)
         raise SystemExit("Unable to retrive intAccount value.")
 
     return _response.headers["Set-Cookie"].split(";")[0].split("=")[-1]
@@ -93,8 +98,8 @@ def get_int_account(session_id=None):
     with requests.Session() as sess:
         _response = sess.get(url=url_info_client, params=_payload)
 
-    if _response.ok != True:
-        print(_response.text)
+    if not _response.ok:
+        logging.error(_response.text)
         raise SystemExit("Unable to retrive intAccount value.")
 
     _config_dict = _response.json()
@@ -128,7 +133,9 @@ def get_login_data(username=None, password=None, config=False):
     return user_data
 
 
-def download_positions(calendar, path, data, filename_template="positions_%Y%m%d"):
+def download_positions(
+    calendar, path, data, filename_template="positions_%Y%m%d"
+):
     """Dowload positions Excel files.
 
     Parameters
@@ -145,8 +152,8 @@ def download_positions(calendar, path, data, filename_template="positions_%Y%m%d
 
         _filename = _date.strftime(filename_template) + ".xls"
         _file = path / _filename
-        if _file.exists(): continue  # early stop
-
+        if _file.exists():
+            continue  # early stop
 
         url_formated = url_positions.format(
             int_account=data["intAccount"],

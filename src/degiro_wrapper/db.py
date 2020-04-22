@@ -31,7 +31,8 @@ def update_data():
     date_start = "20191001"
     date_end = datetime.datetime.today()
     path = Path(config["DEGIRO"]["files_dir"]).expanduser().absolute()
-    if not path.exists(): path.mkdir()
+    if not path.exists():
+        path.mkdir()
 
     dw.api_methods.download_positions(
         calendar=pd.date_range(start=date_start, end=date_end, freq="B"),
@@ -49,9 +50,6 @@ def update_data():
     cf = dw.preprocess.generate_cashflows(
         path_account=path_account, isin_cash=ISIN_CASH
     )
-
-    cashflows_df = cf["cashflows"]
-    cashflows_external_df = cf["cashflows_external"]
 
     out = dict(**positions_raw_df, **cf)
     return out
