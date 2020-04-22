@@ -1,0 +1,6 @@
+jupyter
+notebook
+jupyterlab
+plotly
+voila
+voila-gridstack   # isn't persistent

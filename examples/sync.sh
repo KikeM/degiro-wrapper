@@ -1,0 +1,1 @@
+jupytext --sync sandbox.ipynb

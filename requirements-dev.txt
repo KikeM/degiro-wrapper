@@ -1,0 +1,7 @@
+python-language-server[all]
+pdbpp
+flake8
+black
+pipdeptree
+ipython
+jupytext

@@ -1,0 +1,6 @@
+QuantStats
+tqdm
+xlrd
+pandas
+numpy
+matplotlib
