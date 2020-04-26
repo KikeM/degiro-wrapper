@@ -2,6 +2,7 @@ from random import normalvariate
 from time import sleep
 
 import requests
+from bs4 import BeautifulSoup
 from lxml import html
 
 
@@ -70,8 +71,32 @@ def url_to_tree(url, wait = True):
     -------
     Element html
     """
-    # Wait some random time to prevent getting blocked. 
-    if wait == True:
+    response = get_response(url, wait = wait)
+
+    # Build tree
+    tree = html.fromstring(response.content)
+    
+    return tree 
+    
+
+def url_to_soup(url, wait = True):
+    """Convert url to BeautifulSoup.
+
+    Parameters
+    ----------
+    url: str
+
+    Returns
+    -------
+    BeautifulSoup
+    """
+    response = get_response(url, wait = wait)
+
+    soup = BeautifulSoup(response.text, features="lxml")
+
+    return soup
+
+
 
         _sleep_random()
 
@@ -94,3 +119,32 @@ def _sleep_random(mu = 0.5, sigma = 1):
     _time = abs(_time)
 
     sleep(_time)
+
+
+def get_response(url, wait = True):
+    """Get Requests response with wait parameter. 
+
+    Parameters
+    ----------
+    url: str
+
+    Returns
+    -------
+    requests.Response
+
+    Raises
+    ------
+    ValueError on status_code != 200.
+    """
+    # Wait some random time to prevent getting blocked. 
+    if wait == True:
+
+        _sleep_random()
+
+    # Get HTML
+    response = requests.get(url=url)
+
+    if response.status_code != 200:
+        raise ValueError(f"Response code for {url} was {response.status_code}.")
+
+    return response
