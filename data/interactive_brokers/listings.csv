@@ -1,0 +1,118 @@
+Country/Region;Products;Hours
+Vienna Stock Exchange (VSE);"Indices
+Stocks";Monday - Friday: 9:00-17:40
+Bats Europe (BATEEN);Stocks;Monday - Friday: 800 - 1630
+CHI-X Europe Ltd Clearnet (CHIXEN);Stocks;Monday - Friday: 800 - 1630
+ENEXT.BE;Stocks;Monday - Friday: 9:00-17:40
+Euronext Brussels (BELFOX);"Futures (Equity Index)
+Indices
+Options (Equity Index)";Monday - Friday: 9:00-17:35
+Turquoise (TRQXEN);Stocks;Monday - Friday: 800 - 1630
+Nasdaq Baltic (N.TALLINN);Stocks;Mon-Fri 10:00-16:00 (EET)
+Euronext Bonds;Fixed Income (Corporate and Non-US Sovereign);Monday - Friday: 14:59-23:59
+Bats Europe (BATEEN);Stocks;Monday - Friday: 800 - 1630
+CHI-X Europe Ltd Clearnet (CHIXEN);Stocks;Monday - Friday: 800 - 1630
+Euronext France (MATIF);"Futures (Agriculture)
+Indices";Monday - Friday: 10:45-18:30
+Euronext France (MONEP);"Futures (Equity Index)
+Indices
+Options (Equity, Equity Index)";"Options: 9:00 - 17:30 CET
+Futures: 8:00 - 22:00 CET"
+Euronext France (SBF);"ETFs
+Stocks
+Structured Products (Turbos and Certificates)
+Warrants (Index, Stock)";Monday - Friday: 9:00-17:40
+Turquoise (TRQXEN);Stocks;Monday - Friday: 800 - 1630
+Bats Europe (BATEDE);Stocks;Monday - Friday: 8:00 - 16:30
+CBOE EU;Stocks;Monday - Friday: 800 - 1630
+CHI-X Europe Ltd Clearstream (CHIXDE);"ETFs
+Stocks";Monday - Friday: 9:00-17:30
+EUREX (DTB);"Futures (Equity Index, Fixed Income, Single Stock)
+Futures Options (Fixed Income)
+Indices
+Options (Equity, Equity Index)";Monday - Friday: 9:00-22:05
+Frankfurt Stock Exchange (FWB);"ETFs
+Stocks
+Structured Products (Turbos and Certificates)
+Warrants (Index, Stock)";Monday - Friday: 8:00-20:00
+Stuttgart Stock Exchange (SWB);"ETFs
+Stocks
+Structured Products (Turbos and Certificates)
+Warrants (Index, Stock)";Monday - Friday: 8:00-22:00
+Tradegate Exchange (TRADEGATE);Stocks;Monday - Friday: 9:00-20:00
+Turquoise DE (TRQXDE);Stocks;Monday - Friday: 9:00-17:30
+XETRA (IBIS);"ETFs
+Indices
+Stocks";Monday - Friday: 9:00-17:40
+Budapest Stock Exchange;Stocks;Monday - Friday: 9:00-17:20
+Tel Aviv Stock Exchange;"ETFs
+Stocks";"Sun 9:30 - 16:251
+ Mon-Thurs 9:30-17:151
+ 1See Exchange site for details
+Israel Standard Time"
+Borsa Italiana;ETFs;Monday - Friday: 9:00-17:42
+Borsa Italiana (BVME);"Indices
+Stocks
+Structured Products
+Warrants (Index, Stock)";Monday - Friday: 9:00-17:42
+Borsa Italiana (IDEM);"Futures (Equity Index, Single Stock)
+Options (Equity, Equity Index)
+Single Stock Futures";Monday - Friday: 9:00-17:50
+Nasdaq Baltic (N.RIGA);Stocks;Mon-Fri 10:00-16:00 (EET)
+Nasdaq Baltic (N.VILNIUS);Stocks;Mon-Fri 10:00-16:00 (EET)
+Bats Europe (BATEEN);Stocks;Monday - Friday: 8:00-16:30
+CHI-X Europe Ltd Clearnet (CHIXEN);"ETFs
+Stocks";Monday - Friday: 9:00-17:30
+Euronext NL Derivatives (FTA);"Futures (Currency, Equity Index)
+Indices
+Options (Currency, Equity, Equity Index)";Monday - Friday: 9:00-22:00
+Euronext NL Stocks (AEB);"ETFs
+Stocks
+Structured Products (Turbos and Certificates)";Monday - Friday: 9:00-17:40
+Turquoise (TRQXEN);Stocks;Monday - Friday: 9:00-17:30
+OMXNO;Stocks;Monday - Friday: 9:00-16:20
+Warsaw Stock Exchange;Stocks;Monday - Friday: 11:00-17:05
+BVL;Stocks;Monday - Friday: 8:00-18:05
+Moscow Exchange;Stocks;9:30-19:00 MSK
+Bats Europe (BATEES);Stocks;Monday - Friday: 8:00-16:30
+Bolsa de Madrid (BM);"ETFs
+Indices
+Stocks";Monday - Friday: 9:00-17:35
+CHI-X Europe Ltd Clearnet (CHIXES);Stocks;Monday - Friday: 9:00-17:30
+Spanish Futures & Options Exchange (MEFF);"Futures (Equity Index, Single Stock)
+Indices
+Options (Equity, Equity Index)";Monday - Friday: 9:00-17:35
+Nasdaq OMX - Stockholm (OMS);"Futures (Equity Index)
+Indices
+Options (Equity)";Monday - Friday: 9:00-17:25
+Swedish Stock Exchange (SFB);"ETFs
+Indices
+Stocks";Monday - Friday: 9:00-17:30
+BATS Europe (BATECH);Stocks;Monday - Friday: 8:00-16:30
+CHI-X Europe Ltd Swiss (CHIXCH);Stocks;Monday - Friday: 9:00-17:30
+EUREX (SOFFEX);"Futures (Equity Index, Single Stock)
+Indices
+Options (Equity, Equity Index)";Monday - Friday: 8:00-22:00
+SIX Swiss Exchange (EBS);"ETFs
+Indices
+Stocks
+Warrants (Index, Stock)";Monday - Friday: 9:00-17:32
+Turquoise CH (TRQXCH);Stocks;Monday - Friday: 9:00-17:30
+VIRT-X (VIRTX);"Indices
+Stocks";Monday - Friday: 9:00-17:32
+Bats Europe (BATEUK);Stocks;Monday - Friday: 8:00-16:30
+CHI-X Europe Ltd Crest (CHIXUK);"ETFs
+Stocks";Monday - Friday: 8:00-16:30
+Intercontinental Exchange (ICE/IPE);Futures (Energy);Monday - Sunday: 1:00-23:00
+Intercontinental Exchange (ICEEU);"Futures (Equity Index, Fixed Income, Single Stock)
+Futures Options (Fixed Income)
+Indices
+Options (Equity, Equity Index)";Monday - Friday: 8:00-18:00
+Intercontinental Exchange (ICEEUSOFT);"Futures (Commodities)
+Indices";Monday - Friday: 8:45-18:00
+LME OTC Lookalike Platform;Futures;Mon-Fri 0100-1900 WET
+London Stock Exchange (LSE);"ETFs
+Indices
+Stocks";Monday - Friday: 8:00-16:50
+LSE ETF Exchange;ETFs;8:00-16:30 GMT
+LSE International Order Book (LSEIOB1);Stocks;Monday - Friday: 9:00-17:00
