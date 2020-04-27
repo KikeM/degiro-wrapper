@@ -1,3 +1,4 @@
+import webbrowser
 from random import normalvariate
 from time import sleep
 
@@ -19,9 +20,13 @@ def parse_table(tree, xpaths):
     Returns
     -------
     list of tuples of strings
-        [(name, currency, IB symbol, Trading symbol), ...]
+        [(name, currency, ISIN, IB symbol, Trading symbol), ...]
 
-    If no rows are retrieved, list is empty
+    If no rows are retrieved, list is empty.
+
+    Notes
+    -----
+    Ad-hoc table parsing for IB. 
     """
     # Collect xpaths
     xpath_name      = xpaths["name"]
@@ -41,14 +46,16 @@ def parse_table(tree, xpaths):
             currency       = tree.xpath(xpath_currency.format(row=_row))[0].text
             symbol_ib      = tree.xpath(xpath_symbol_ib.format(row=_row))[0].text
             symbol_trading = tree.xpath(xpath_symbol.format(row=_row))[0].text
-        
+            isin           = get_isin(tree, _row)
+            #isin           = None
+            
         # If no more rows are available, catch error
         except IndexError as error: 
             # pass
             break
 
         # Append row to list
-        rows.append((name, currency, symbol_ib, symbol_trading))
+        rows.append((name, currency, isin, symbol_ib, symbol_trading))
 
         # Move to the next row
         _row += 1
@@ -97,22 +104,49 @@ def url_to_soup(url, wait = True):
     return soup
 
 
+def get_isin(tree, row):
+    """Get ISIN value from exchange tree. 
 
-        _sleep_random()
+    Parameters
+    ----------
+    Element HTML
 
-    # Get HTML
-    response = requests.get(url=url)
-
-    if response.status_code != 200:
-        raise ValueError(f"Response code for {url} was {response.status_code}.")
-
-    # Build tree
-    tree = html.fromstring(response.content)
+    Returns
+    -------
+    str
     
-    return tree 
-    
+    Notes
+    -----
+    So fu***** lucky. 
+    """
+    # Read data URL linked to product name
+    xpath_data = '//*[@id="exchange-products"]/div/div/div[3]/div/div/div/table/tbody/tr[{row}]/td[2]/a'
+    url_data = tree.xpath(xpath_data.format(row = row))[0].attrib['href'].split("'")[1]
 
-def _sleep_random(mu = 0.5, sigma = 1):
+    # Get soup from data URL
+    soup = url_to_soup(url_data)
+
+    # Get all elements from soup in specific format. 
+    elements = set(soup.text.replace('\n', ',').split(','))
+
+    # Capture and exploit ISINXXYYYYYYY structure
+    # after set operation
+    for element in elements:
+        if 'ISIN' in element:
+            text = element
+            break
+
+    try:
+        isin = text.split('ISIN')[-1]
+    except UnboundLocalError:
+        webbrowser.open_new(url_data)
+        input("Hit enter when you have solved the captcha.")
+        isin = get_isin(tree, row = row)
+
+    return isin
+
+
+def _sleep_random(mu = 0.25, sigma = 1):
     """Sleep for random time.
     """
     _time = normalvariate(mu, sigma)

@@ -42,16 +42,16 @@ exchanges = [('sbf', 'Euronext France'),
 # %%
 xpaths = dict()
 
-xpaths["symbolIB"]      = '//*[@id="exchange-products"]/div/div/div[3]/div/div/div/table/tbody/tr[{row}]/td[1]'
 xpaths["name"]          = '//*[@id="exchange-products"]/div/div/div[3]/div/div/div/table/tbody/tr[{row}]/td[2]/a'
-xpaths["symbolTrading"] = '//*[@id="exchange-products"]/div/div/div[3]/div/div/div/table/tbody/tr[{row}]/td[3]'
 xpaths["currency"]      = '//*[@id="exchange-products"]/div/div/div[3]/div/div/div/table/tbody/tr[{row}]/td[4]'
+xpaths["symbolIB"]      = '//*[@id="exchange-products"]/div/div/div[3]/div/div/div/table/tbody/tr[{row}]/td[1]'
+xpaths["symbolTrading"] = '//*[@id="exchange-products"]/div/div/div[3]/div/div/div/table/tbody/tr[{row}]/td[3]'
 
 # %%
 url  = "https://www.interactivebrokers.com/en/index.php?"
 url += "f=2222&exch={exchange}&showcategories=ETF&p=&cc=&limit=100&page={page}"
 
-# %%
+# %% code_folding=[]
 # Add exchange
 products = []
 
