@@ -55,7 +55,7 @@ class Portfolio():
         return user_data
 
     def download_positions(self, start, end = None, calendar = None, template = "pos_%Y%m%d"):
-        """Dowload portfolio positions. 
+        """Download portfolio positions. 
 
         Parameters
         ----------
@@ -178,12 +178,22 @@ class Portfolio():
 
         return cleaned_data
 
-    def download_cashflows(self, path_assets = None):
+    def download_cashflows(self, path = None):
+        """Download the cashflows into the positions and the cash position.
 
-        if path_assets is None:
+        Parameters
+        ----------
+        path: Path-like
+            Location to download the file.
+
+        Notes
+        -----
+        If no path is provided, it will be downloaded to the assets folder.
+        """
+        if path is None:
             _path = self.get_path_assets()
         else:
-            _path = path_assets
+            _path = path
 
         date_start = self.calendar[0]
         date_end = self.calendar[-1]
@@ -203,7 +213,13 @@ class Portfolio():
         return cashflows_df, cashflows_external_df
 
     def compute_monetary_fund(self):
-        
+        """Compute monetary fund returns.
+
+        Notes
+        -----
+        To use the fund as an additional position, we can assume it 
+        is invested in a monetary fund.  
+        """
         # ??? : why the following is needed
         # I think I need to aggreagate the cashflows into the positions and the 
         # actual amount of cash in the monetary fund.
@@ -230,12 +246,30 @@ class Portfolio():
             # Does it matter?
             self.rets_df.loc[today, self.ISIN_CASH] = (cash_today - flows) / cash_yesterday - 1
 
-    def compute_metrics(self):
+    def compute_time_series(self):
+        """Compute general portfolio time series:
+
+        1. Weights.
+        2. Daily returns.
+        3. Total return (adjusted for cashflows).
+
+        From these one can compute most of 
+        the performance and risk metrics. 
+        """
         self.compute_weights()
-        self.compute_daily_returns()
-        self.compute_total_return()
+        self.compute_return_daily()
+        self.compute_return_total()
 
     def compute_weights(self):
+        """Compute positions weights.
+
+        Returns
+        -------
+        pd.DataFrame
+            - Columns: position ISIN
+            - Index: Datetime-like
+            - Values: float
+        """
 
         logging.info("Computing weights ...")
 
@@ -249,37 +283,62 @@ class Portfolio():
 
         return weights_df
 
-    def compute_daily_returns(self):
+    def compute_return_daily(self):
+        """Compute portfolio daily returns.
 
+        Returns
+        -------
+        pd.Series
+            - Index: Datetime-like
+            - Values: float
+            - Name: returnDaily
+        """
         logging.info("Computing daily returns ...")
 
-        pf_returns_ss = (self.rets_df * self.weights_df).dropna(how="all").sum(axis=1)
-        pf_returns_ss.index.name = "Date"
+        returns_ss = (self.rets_df * self.weights_df).dropna(how="all").sum(axis=1)
+        returns_ss.index.name = "Date"
+        returns_ss.name = "returnDaily"
         
-        self.pf_returns_ss = pf_returns_ss.copy()
+        self.returns_ss = returns_ss.copy()
 
-        return pf_returns_ss
+        return returns_ss
 
-    def compute_total_return(self):
-        
+    def compute_return_total(self):
+        """Compute portfolio total return. 
+
+        Returns
+        -------
+        pd.Series
+            - Index: Datetime-like
+            - Values: float
+            - Name: returnTotal
+        """        
         logging.info("Computing total return ...")
         
-        pf_equity_ss = self.pf_returns_ss.add(1).cumprod().sub(1)
-        pf_equity_ss.index.name = "Date"
+        return_total_ss = self.returns_ss.add(1).cumprod().sub(1)
+        return_total_ss.index.name = "Date"
+        return_total_ss.name = "returnTotal"
 
-        self.pf_equity_ss = pf_equity_ss.copy()
+        self.return_total_ss = return_total_ss.copy()
 
-        return pf_equity_ss
+        return return_total_ss
 
     def build_portfolio(self, start = "20190101"):
+        """Integration method to compute portfolio time series.
 
-        # API call
+        Invoking this method will connect to the broker API
+        """
+
+        # Get API user headers
         self.load_configuration()
 
-        # All positions
+        # Download and process all positions
         self.download_positions(start = start)
         self.preprocess_positions()
         
+        # Compute cash evolution
         self.download_cashflows()
         self.compute_monetary_fund()
-        self.compute_metrics()
+
+        # Portfolio time series
+        self.compute_time_series()
