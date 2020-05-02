@@ -79,12 +79,14 @@ class Portfolio():
         If no end is specified, used today's date. 
         """
         # Location to download the xls files.
-        path_assets = self.get_assets_path()
+        path_assets = self.get_path_assets()
         user_data = self.get_user_data()
 
         # Dates to query the broker for the dates
         if calendar is None:
             calendar = self._create_daily_calendar(start, end)
+
+        self.calendar = calendar
 
         logging.info("Downloading data")
         dw.api_methods.download_positions(
@@ -122,7 +124,7 @@ class Portfolio():
 
         return calendar
 
-    def get_assets_path(self):
+    def get_path_assets(self):
         """Get path for folder to store assets.
 
         Returns
@@ -134,7 +136,7 @@ class Portfolio():
         If the folder does not exist it will be created. 
         """
         logging.info("Retrieving assets folder path ...")
-        path = Path(config[CONFIG_SECTION]["files_dir"]).expanduser().absolute()
+        path = Path(self.config[self.config_section]["files_dir"]).expanduser().absolute()
 
         # Create folder and parents if they do not exist
         if not path.exists():
@@ -143,12 +145,15 @@ class Portfolio():
 
         return path
 
-    def preprocess_positions(self, path_assets = None):
+    def preprocess_positions(self, path_assets = None, template = "pos_*.xls"):
         """From raw xls files to dataframes.
 
         Parameters
         ----------
         path_assets: Path-like
+
+        template: str
+            Regex template to identify the files to parse. 
 
         Returns
         -------
@@ -156,9 +161,12 @@ class Portfolio():
             - Keys: "amount", "prices", "shares", "nav", "returns"
             - Values: pd.DataFrame
         """
-        path_assets = self.get_assets_path()
+        if path_assets is None:
+            _path = self.get_path_assets()
+        else:
+            _path = path_assets
 
-        positions_raw_df = dw.preprocess.positions_xls_to_df(path, isin_cash=self.ISIN_CASH)
+        positions_raw_df = dw.preprocess.positions_xls_to_df(path = _path, isin_cash=self.ISIN_CASH, glob=template)
 
         cleaned_data = dw.preprocess.positions_raw_to_clean(positions_raw_df)
 
@@ -170,13 +178,21 @@ class Portfolio():
 
         return cleaned_data
 
-    def download_cashflows(self, path_assets):
+    def download_cashflows(self, path_assets = None):
+
+        if path_assets is None:
+            _path = self.get_path_assets()
+        else:
+            _path = path_assets
+
+        date_start = self.calendar[0]
+        date_end = self.calendar[-1]
 
         # Download Account file
-        path_account = dw.api_methods.download_cashflows(user_data, date_start, date_end, path_assets)
+        path_account = dw.api_methods.download_cashflows(self.user_data, date_start, date_end, _path)
 
         # Separate cashflows into internal cashflows and external cashflows
-        cf = dw.preprocess.generate_cashflows(path_account=path_account, isin_cash=ISIN_CASH)
+        cf = dw.preprocess.generate_cashflows(path_account=path_account, isin_cash=self.ISIN_CASH)
         
         cashflows_df = cf["cashflows"]
         cashflows_external_df = cf["cashflows_external"]
@@ -204,15 +220,15 @@ class Portfolio():
         # Compute monetary fund daily return
         for today, yesterday in zip(cash_calendar[1:], cash_calendar):
 
-            cash_today = self.amount_df.loc[today, ISIN_CASH]
+            cash_today = self.amount_df.loc[today, self.ISIN_CASH]
 
-            cash_yesterday = self.amount_df.loc[yesterday, ISIN_CASH]
+            cash_yesterday = self.amount_df.loc[yesterday, self.ISIN_CASH]
 
             flows = cashflows_total_ss.loc[today]
 
             # Adjust in the numerator or the denominator?
             # Does it matter?
-            self.rets_df.loc[today, ISIN_CASH] = (cash_today - flows) / cash_yesterday - 1
+            self.rets_df.loc[today, self.ISIN_CASH] = (cash_today - flows) / cash_yesterday - 1
 
     def compute_metrics(self):
         self.compute_weights()
@@ -223,11 +239,13 @@ class Portfolio():
 
         logging.info("Computing weights ...")
 
-        weights_df = amount_df.div(amount_df.sum(axis=1), axis="index").shift(1)
+        _amount_df = self.amount_df
+
+        weights_df = _amount_df.div(_amount_df.sum(axis=1), axis="index").shift(1)
         weights_df = weights_df.rename(columns={self.ISIN_CASH: "Cash"})
         weights_df.index.name = "Date"
 
-        self.weights = weights_df
+        self.weights_df = weights_df.copy()
 
         return weights_df
 
@@ -255,8 +273,13 @@ class Portfolio():
 
     def build_portfolio(self, start = "20190101"):
 
+        # API call
         self.load_configuration()
+
+        # All positions
         self.download_positions(start = start)
+        self.preprocess_positions()
+        
         self.download_cashflows()
         self.compute_monetary_fund()
         self.compute_metrics()
