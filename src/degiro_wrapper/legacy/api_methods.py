@@ -9,7 +9,7 @@ import tqdm
 import requests
 import pandas as pd
 
-from .api_endpoints import (
+from degiro_wrapper.api_endpoints import (
     url_account,
     url_info_client,
     url_login,
