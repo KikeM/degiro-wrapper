@@ -5,96 +5,22 @@ from pathlib import Path
 import pandas as pd
 
 import degiro_wrapper as dw
+from degiro_wrapper.connector import ConnectorDegiro
 
 
 class Portfolio():
 
     def __init__(self, path_config = "~/degiro-wrapper/degiro.ini"):
 
-        self.path_config = Path(path_config)
-        self.config_section = "DEGIRO"
-
         self.ISIN_CASH = dw.conventions.ISIN_CASH
 
-        # Initialize variables
-        self.config = None
-        self.user_data = None
+        self.connector = ConnectorDegiro(path_config)
 
         self.amount_df = None
         self.prices_df = None
         self.shares_df = None
         self.nav_df = None
         self.rets_df = None
-
-    def load_configuration(self, path_config = None):
-        """Read configuration file.
-        """
-        logging.info("Reading config.")
-        if path_config is None:
-            _path = self.path_config
-        else:
-            _path = Path(path_config)
-
-        config = dw.api_methods.get_config(_path)
-        
-        self.config = config
-
-        return config
-
-    def get_user_data(self, config = None):
-
-        if config is None:
-            _config = self.config
-        else:
-            _config = config
-
-        user_data = dw.api_methods.get_login_data(config=_config)
-
-        self.user_data = user_data
-
-        return user_data
-
-    def download_positions(self, start, end = None, calendar = None, template = "pos_%Y%m%d"):
-        """Download portfolio positions. 
-
-        Parameters
-        ----------
-        start: "YYMMDD", Datetime-like
-
-        end: "YYMMDD", Datetime-like
-
-        calendar: Datetime-like Index
-            This variable overrides start and end.
-
-        template: str
-            Template for the position filenames.
-            Datetime.strftime(template) will be called.
-
-        Returns
-        -------
-        None
-
-        Notes
-        -----
-        If no end is specified, used today's date. 
-        """
-        # Location to download the xls files.
-        path_assets = self.get_path_assets()
-        user_data = self.get_user_data()
-
-        # Dates to query the broker for the dates
-        if calendar is None:
-            calendar = self._create_daily_calendar(start, end)
-
-        self.calendar = calendar
-
-        logging.info("Downloading data")
-        dw.api_methods.download_positions(
-            calendar=calendar,
-            path=path_assets,
-            data=user_data,
-            filename_template=template,
-        )
 
     def _create_daily_calendar(self, start, end = None):
         """Creates daily calendar with business day frequency.
@@ -113,6 +39,7 @@ class Portfolio():
         -----
         If no end is specified, used today's date. 
         """
+
         date_start = start
 
         if end is None:
@@ -124,28 +51,7 @@ class Portfolio():
 
         return calendar
 
-    def get_path_assets(self):
-        """Get path for folder to store assets.
-
-        Returns
-        -------
-        Path-like
-
-        Notes
-        -----
-        If the folder does not exist it will be created. 
-        """
-        logging.info("Retrieving assets folder path ...")
-        path = Path(self.config[self.config_section]["files_dir"]).expanduser().absolute()
-
-        # Create folder and parents if they do not exist
-        if not path.exists():
-            logging.info(f"Creating assets folder path at {path}")
-            path.mkdir(parents = True)
-
-        return path
-
-    def preprocess_positions(self, path_assets = None, template = "pos_*.xls"):
+    def get_timeseries_positions(self, start, end = None, calendar = None):
         """From raw xls files to dataframes.
 
         Parameters
@@ -161,48 +67,30 @@ class Portfolio():
             - Keys: "amount", "prices", "shares", "nav", "returns"
             - Values: pd.DataFrame
         """
-        if path_assets is None:
-            _path = self.get_path_assets()
+
+        if calendar is None:
+            self.calendar = self._create_daily_calendar(start, end)
         else:
-            _path = path_assets
+            self.calendar = calendar
+            
+        data = self.connector.get_positions(calendar=self.calendar, isin_cash=self.ISIN_CASH)
 
-        positions_raw_df = dw.preprocess.positions_xls_to_df(path = _path, isin_cash=self.ISIN_CASH, glob=template)
+        self.amount_df = data["amount"]
+        self.prices_df = data["prices"]
+        self.shares_df = data["shares"]
+        self.nav_df = data["nav"]
+        self.rets_df = data["returns"]
 
-        cleaned_data = dw.preprocess.positions_raw_to_clean(positions_raw_df)
+        return data
 
-        self.amount_df = cleaned_data["amount"]
-        self.prices_df = cleaned_data["prices"]
-        self.shares_df = cleaned_data["shares"]
-        self.nav_df = cleaned_data["nav"]
-        self.rets_df = cleaned_data["returns"]
-
-        return cleaned_data
-
-    def download_cashflows(self, path = None):
+    def download_cashflows(self):
         """Download the cashflows into the positions and the cash position.
-
-        Parameters
-        ----------
-        path: Path-like
-            Location to download the file.
-
-        Notes
-        -----
-        If no path is provided, it will be downloaded to the assets folder.
         """
-        if path is None:
-            _path = self.get_path_assets()
-        else:
-            _path = path
 
-        date_start = self.calendar[0]
-        date_end = self.calendar[-1]
+        start = self.calendar[0]
+        end = self.calendar[-1]
 
-        # Download Account file
-        path_account = dw.api_methods.download_cashflows(self.user_data, date_start, date_end, _path)
-
-        # Separate cashflows into internal cashflows and external cashflows
-        cf = dw.preprocess.generate_cashflows(path_account=path_account, isin_cash=self.ISIN_CASH)
+        cf = self.connector.get_cashflows(start, end, self.ISIN_CASH)
         
         cashflows_df = cf["cashflows"]
         cashflows_external_df = cf["cashflows_external"]
@@ -323,18 +211,14 @@ class Portfolio():
 
         return return_total_ss
 
-    def build_portfolio(self, start = "20190101"):
+    def build_portfolio(self, start = "20190101", end = None, calendar = None):
         """Integration method to compute portfolio time series.
 
         Invoking this method will connect to the broker API
         """
 
-        # Get API user headers
-        self.load_configuration()
-
         # Download and process all positions
-        self.download_positions(start = start)
-        self.preprocess_positions()
+        self.get_timeseries_positions(start = start, end = end, calendar = calendar)
         
         # Compute cash evolution
         self.download_cashflows()
