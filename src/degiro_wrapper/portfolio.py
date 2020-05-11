@@ -1,5 +1,7 @@
+import configparser
 import datetime
 import logging
+import pathlib
 from pathlib import Path
 
 import pandas as pd
@@ -13,14 +15,45 @@ class Portfolio():
     def __init__(self, path_config = "~/degiro-wrapper/degiro.ini"):
 
         self.ISIN_CASH = dw.conventions.ISIN_CASH
-
-        self.connector = ConnectorDegiro(path_config)
-
+        self.config = None
         self.amount_df = None
         self.prices_df = None
         self.shares_df = None
         self.nav_df = None
         self.rets_df = None
+
+        self.connector = ConnectorDegiro(path_config)
+
+        self.config_path = path_config
+        self.get_config(path_config)
+
+        self.date_start = pd.to_datetime(self.config['DEGIRO']['date_start'])
+
+    def get_config(self, fname = None):
+        """Read data from config file.
+
+        Parameters
+        ----------
+        fname : Path-like, str
+            Complete path to config file.
+
+        Returns
+        -------
+        config : config
+        """
+
+        if fname is None:
+            _fname = self.path_config
+        else:
+            _fname = fname
+        config = configparser.ConfigParser()
+        _fname = pathlib.Path(_fname).expanduser().absolute()
+        config.read(_fname)
+
+        self.config = config
+
+        logging.info("Config file processed")
+        return config
 
     def _create_daily_calendar(self, start, end = None):
         """Creates daily calendar with business day frequency.
@@ -211,11 +244,36 @@ class Portfolio():
 
         return return_total_ss
 
+    def _check_date_start(self, date):
+        """Check date with config file date_start variable.
+
+        Parameters
+        ----------
+        date: Datetime-like, str
+
+        Raises
+        ------
+        ValueError if date < self.date_start
+        """
+        
+        _date = pd.to_datetime(date)
+
+        if _date < self.date_start:
+            raise ValueError(f"""
+            The start date ({_date}) is previous to the portfolio's
+            configuration date start {self.date_start}.
+        """
+        )
+        
+
     def build_portfolio(self, start = "20190101", end = None, calendar = None):
         """Integration method to compute portfolio time series.
 
         Invoking this method will connect to the broker API
         """
+
+        # Check start date is within the portfolio's scope
+        self._check_date_start(start)
 
         # Download and process all positions
         self.get_timeseries_positions(start = start, end = end, calendar = calendar)
