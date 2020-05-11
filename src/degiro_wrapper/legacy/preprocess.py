@@ -121,7 +121,7 @@ def positions_raw_to_clean(raw_positions):
 
 
 def generate_cashflows(path_account, isin_cash):
-    """Generate positions and cash flows.
+    """Generate casha and positions flows.
 
     Parameters
     ----------

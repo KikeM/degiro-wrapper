@@ -1,8 +1,8 @@
 from . import api_endpoints
-from . import api_methods
 from . import conventions
-from . import model
-from . import preprocess
+from . import portfolio
+from . import connector
+from . import legacy
 import logging
 
 logging.basicConfig(level=logging.INFO)
