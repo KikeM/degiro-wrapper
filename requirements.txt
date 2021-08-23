@@ -1,4 +1,4 @@
-jupyterlab==2.0.1
+jupyterlab==2.2.10
 pipdeptree==0.13.2
 QuantStats==0.0.25
 tqdm==4.43.0
