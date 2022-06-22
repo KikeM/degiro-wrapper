@@ -7,6 +7,7 @@ import urllib.request
 import pandas as pd
 import requests
 import tqdm
+from degiro_wrapper.conventions import FILENAME_POSITIONS
 
 from .api_endpoints import url_account, url_info_client, url_login, url_positions
 
@@ -139,7 +140,7 @@ def download_positions_raw(
     calendar,
     path,
     credentials,
-    filename_template="positions_%Y-%m-%d",
+    filename_template=FILENAME_POSITIONS,
 ):
     """Dowload positions CSV files.
 
@@ -151,7 +152,8 @@ def download_positions_raw(
         - 'intAccount'
         - 'sessionId'
     filename_template: str
-        By default 'positions_%Y-%m-%d'
+        By default 'positions_%Y-%m-%d',
+        see degiro_wrapper.conventions::FILENAME_POSITIONS
     """
     for _date in tqdm.tqdm(calendar):
 

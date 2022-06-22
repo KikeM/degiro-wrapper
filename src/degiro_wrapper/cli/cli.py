@@ -3,9 +3,9 @@ from pprint import pprint
 
 import click
 import pandas as pd
-from degiro_wrapper.core.api_methods import download_positions_raw
+from degiro_wrapper.core.api_methods import download_positions_raw, get_login_data
+from degiro_wrapper.core.preprocess import clean_positions
 from degiro_wrapper.core.utils import create_ytd_calendar
-from degiro_wrapper.core.api_methods import get_login_data
 
 
 @click.group
@@ -64,6 +64,7 @@ def download_positions(from_, to, path):
     help="Path to check the positions files and dates.",
 )
 def check_missing_dates(path):
+    """Check missing dates YTD from raw positions."""
 
     path = Path(path)
 
@@ -81,3 +82,37 @@ def check_missing_dates(path):
     dates_missing = dates_missing.sort_values()
 
     pprint(dates_missing, compact=False)
+
+
+@cli.command
+@click.option(
+    "--path",
+    "-p",
+    "path",
+    type=str,
+    default=".",
+    required=True,
+    help="Path to extract positions.",
+)
+@click.option(
+    "--to",
+    "-t",
+    "path_to",
+    type=str,
+    required=False,
+    default=None,
+    help="Path to dump database. By default the parent of --path is used.",
+)
+def create_database(path, path_to):
+    """Create positions database from raw positions folder."""
+
+    path = Path(path)
+    click.echo(f"Cleaning raw positions from : {path.absolute()}")
+
+    if path_to is None:
+        path_to = path.parent
+    path_to = Path(path_to) / "positions_database.csv"
+    click.echo(f"Dumping database to {path_to.absolute()}")
+
+    long = clean_positions(path)
+    long.to_csv(path_to)
