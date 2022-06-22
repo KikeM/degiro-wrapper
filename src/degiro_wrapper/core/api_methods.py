@@ -7,7 +7,7 @@ import urllib.request
 import pandas as pd
 import requests
 import tqdm
-from degiro_wrapper.conventions import FILENAME_POSITIONS
+from degiro_wrapper.conventions import FILENAME_POSITIONS, Credentials
 
 from .api_endpoints import url_account, url_info_client, url_login, url_positions
 
@@ -95,7 +95,7 @@ def get_int_account(session_id=None):
     """
     sess = requests.Session()
 
-    _payload = {"sessionId": session_id}
+    _payload = {Credentials.SESSION_ID: session_id}
 
     _response = sess.get(url=url_info_client, params=_payload)
 
@@ -107,12 +107,11 @@ def get_int_account(session_id=None):
 
     sess.close()
 
-    return _config_dict["data"]["intAccount"]
+    return _config_dict["data"][Credentials.ACCOUNT_ID]
 
 
-def get_login_data(username=None, password=None, config=False):
-    """
-    Get sessionId and intAccount values for a username and a password.
+def get_login_data(config=False):
+    """Get sessionId and intAccount values for a username and a password.
 
     Parameters
     ----------
@@ -128,12 +127,12 @@ def get_login_data(username=None, password=None, config=False):
     session_id = get_session_id(config=config)
     int_account = get_int_account(session_id)
 
-    user_data = dict()
+    credentials = dict()
 
-    user_data["sessionId"] = session_id
-    user_data["intAccount"] = int_account
+    credentials[Credentials.SESSION_ID] = session_id
+    credentials[Credentials.ACCOUNT_ID] = int_account
 
-    return user_data
+    return credentials
 
 
 def download_positions_raw(
@@ -155,55 +154,56 @@ def download_positions_raw(
         By default 'positions_%Y-%m-%d',
         see degiro_wrapper.conventions::FILENAME_POSITIONS
     """
-    for _date in tqdm.tqdm(calendar):
+    for date in tqdm.tqdm(calendar):
 
-        _filename = _date.strftime(filename_template) + ".csv"
+        filename = date.strftime(filename_template) + ".csv"
 
-        url_formated = url_positions.format(
-            int_account=credentials["intAccount"],
-            session_id=credentials["sessionId"],
-            day=_date.strftime("%d"),
-            month=_date.strftime("%m"),
-            year=_date.strftime("%Y"),
+        url_formatted = url_positions.format(
+            int_account=credentials[Credentials.ACCOUNT_ID],
+            session_id=credentials[Credentials.SESSION_ID],
+            day=date.strftime("%d"),
+            month=date.strftime("%m"),
+            year=date.strftime("%Y"),
         )
 
-        _path = path / _filename
-        urllib.request.urlretrieve(url_formated, _path)
+        _path = path / filename
+        urllib.request.urlretrieve(url_formatted, _path)
 
 
-def download_cashflows(user_data, date_start, date_end, path_account):
+def download_cashflows_raw(credentials, start, end, path):
     """Download positions and cash flows.
 
     Parameters
     ----------
-    user_date: dict
-    date_start: str or Datetime-like
-    date_end: str or Datetime-like
-    path_account: Path-like to folder
+    user_date : dict
+    start : str or Datetime-like
+    end : str or Datetime-like
+    path : Path-like
 
     Returns
     -------
-    path_account: Path-like
+    path : Path-like
     """
     # Parse dates
-    date_start = pd.to_datetime(date_start)
-    date_end = pd.to_datetime(date_end)
+    start = pd.to_datetime(start)
+    end = pd.to_datetime(end)
 
     # Format download URL
-    url_account_formated = url_account.format(
-        int_account=user_data["intAccount"],
-        session_id=user_data["sessionId"],
-        day_i=date_start.strftime("%d"),
-        month_i=date_start.strftime("%m"),
-        year_i=date_start.strftime("%Y"),
-        day_f=date_end.strftime("%d"),
-        month_f=date_end.strftime("%m"),
-        year_f=date_end.strftime("%Y"),
+    url_account_formatted = url_account.format(
+        int_account=credentials[Credentials.ACCOUNT_ID],
+        session_id=credentials[Credentials.SESSION_ID],
+        day_i=start.strftime("%d"),
+        month_i=start.strftime("%m"),
+        year_i=start.strftime("%Y"),
+        day_f=end.strftime("%d"),
+        month_f=end.strftime("%m"),
+        year_f=end.strftime("%Y"),
     )
 
     # Download account file
-    path_account, _ = urllib.request.urlretrieve(
-        url_account_formated, path_account / "Account.xls"
-    )
+    start = start.strftime("%Y-%m-%d")
+    end = end.strftime("%Y-%m-%d")
+    path = path / f"cashflows_{start}_{end}.csv"
+    path, _ = urllib.request.urlretrieve(url_account_formatted, path)
 
-    return path_account
+    return path
