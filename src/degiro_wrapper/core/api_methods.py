@@ -1,13 +1,14 @@
-import json
+import configparser
 import getpass
+import json
+import pathlib
 import urllib.request
 
-import tqdm
-import requests
 import pandas as pd
-import pathlib
+import requests
+import tqdm
 
-from api_endpoints import url_account, url_info_client, url_login, url_positions
+from .api_endpoints import url_account, url_info_client, url_login, url_positions
 
 
 def get_config(fname):
@@ -22,7 +23,6 @@ def get_config(fname):
     -------
     config : config
     """
-    import configparser
     config = configparser.ConfigParser()
     _fname = pathlib.Path(fname).expanduser().absolute()
     config.read(_fname)
@@ -135,32 +135,38 @@ def get_login_data(username=None, password=None, config=False):
     return user_data
 
 
-def download_positions(calendar, path, data, filename_template="positions_%Y%m%d"):
-    """Dowload positions Excel files.
+def download_positions_raw(
+    calendar,
+    path,
+    credentials,
+    filename_template="positions_%Y-%m-%d",
+):
+    """Dowload positions CSV files.
 
     Parameters
     ----------
-    calendar: Timestamps iterable
+    calendar: pandas.DatetimeIndex
     path: Path-like object
     data: dict
         - 'intAccount'
         - 'sessionId'
     filename_template: str
-        'XXXXX_%Y%m%d'
+        By default 'positions_%Y-%m-%d'
     """
     for _date in tqdm.tqdm(calendar):
 
-        _filename = _date.strftime(filename_template) + ".xls"
+        _filename = _date.strftime(filename_template) + ".csv"
 
         url_formated = url_positions.format(
-            int_account=data["intAccount"],
-            session_id=data["sessionId"],
+            int_account=credentials["intAccount"],
+            session_id=credentials["sessionId"],
             day=_date.strftime("%d"),
             month=_date.strftime("%m"),
             year=_date.strftime("%Y"),
         )
 
-        urllib.request.urlretrieve(url_formated, path / _filename)
+        _path = path / _filename
+        urllib.request.urlretrieve(url_formated, _path)
 
 
 def download_cashflows(user_data, date_start, date_end, path_account):
