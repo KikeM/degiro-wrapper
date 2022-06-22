@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 22/06/22
+
+ENH, TST: Create positions database
+
 ## [0.2.0] - 22/06/22
 
 ENH: Add CLI:
