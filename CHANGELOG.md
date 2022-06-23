@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.1] - 23/06/22
+
+BUG: Introduce one-day shift in "today" option
+to download positions
+
 ## [0.3.0] - 22/06/22
 
 ENH, TST: Create positions database

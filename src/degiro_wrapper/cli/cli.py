@@ -38,6 +38,9 @@ def download_positions(from_, to, path):
     click.echo("Downloading positions ...")
 
     today = pd.to_datetime(to).date()
+    # Degiro provides updated positions with one-day lag
+    if to == "today":
+        today = today - pd.offsets.BDay(1)
     calendar = pd.date_range(freq="B", start=from_, end=today)
 
     start = calendar[0].strftime("%Y-%M-%d")
