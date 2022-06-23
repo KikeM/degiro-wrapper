@@ -9,7 +9,13 @@ import requests
 import tqdm
 from degiro_wrapper.conventions import FILENAME_POSITIONS, Credentials
 
-from .api_endpoints import url_account, url_info_client, url_login, url_positions
+from .api_endpoints import (
+    url_account,
+    url_info_client,
+    url_login,
+    url_positions,
+    url_transactions,
+)
 
 
 def get_config(fname):
@@ -175,7 +181,7 @@ def download_cashflows_raw(credentials, start, end, path):
 
     Parameters
     ----------
-    user_date : dict
+    credentials : dict
     start : str or Datetime-like
     end : str or Datetime-like
     path : Path-like
@@ -205,5 +211,44 @@ def download_cashflows_raw(credentials, start, end, path):
     end = end.strftime("%Y-%m-%d")
     path = path / f"cashflows_{start}_{end}.csv"
     path, _ = urllib.request.urlretrieve(url_account_formatted, path)
+
+    return path
+
+
+def download_transactions_raw(credentials, start, end, path):
+    """Download transactions CSV file.
+
+    Parameters
+    ----------
+    credentials : dict
+    start : str or Datetime-like
+    end : str or Datetime-like
+    path : Path-like
+
+    Returns
+    -------
+    path : Path-like
+    """
+    # Parse dates
+    start = pd.to_datetime(start)
+    end = pd.to_datetime(end)
+
+    # Format download URL
+    url_transactions_formatted = url_transactions.format(
+        int_account=credentials[Credentials.ACCOUNT_ID],
+        session_id=credentials[Credentials.SESSION_ID],
+        day_i=start.strftime("%d"),
+        month_i=start.strftime("%m"),
+        year_i=start.strftime("%Y"),
+        day_f=end.strftime("%d"),
+        month_f=end.strftime("%m"),
+        year_f=end.strftime("%Y"),
+    )
+
+    # Download account file
+    start = start.strftime("%Y-%m-%d")
+    end = end.strftime("%Y-%m-%d")
+    path = path / f"transactions_{start}_{end}.csv"
+    path, _ = urllib.request.urlretrieve(url_transactions_formatted, path)
 
     return path

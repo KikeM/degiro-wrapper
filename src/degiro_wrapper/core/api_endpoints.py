@@ -28,3 +28,14 @@ url_account += "&country=ES"
 url_account += "&lang=es"
 url_account += "&fromDate={day_i}%2F{month_i}%2F{year_i}"
 url_account += "&toDate={day_f}%2F{month_f}%2F{year_f}"
+
+##############
+# Transactions
+##############
+url_transactions = "https://trader.degiro.nl/reporting/secure/v3/transactionReport/csv"
+url_transactions += "?intAccount={int_account}"
+url_transactions += "&sessionId={session_id}"
+url_transactions += "&country=ES"
+url_transactions += "&lang=es"
+url_transactions += "&fromDate={day_i}%2F{month_i}%2F{year_i}"
+url_transactions += "&toDate={day_f}%2F{month_f}%2F{year_f}"
