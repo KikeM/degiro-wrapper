@@ -21,7 +21,7 @@ url_positions += "&toDate={day}%2F{month}%2F{year}"
 ##############
 # Cash Account
 ##############
-url_account = "https://trader.degiro.nl/reporting/secure/v3/cashAccountReport/xls"
+url_account = "https://trader.degiro.nl/reporting/secure/v3/cashAccountReport/csv"
 url_account += "?intAccount={int_account}"
 url_account += "&sessionId={session_id}"
 url_account += "&country=ES"

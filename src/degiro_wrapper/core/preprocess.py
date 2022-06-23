@@ -2,7 +2,14 @@ import re
 
 import numpy as np
 import pandas as pd
-from degiro_wrapper.conventions import AssetType, Positions, PositionsRaw
+from degiro_wrapper.conventions import (
+    AssetType,
+    CashflowType,
+    Cashflows,
+    CashflowsRaw,
+    Positions,
+    PositionsRaw,
+)
 from pandas.errors import EmptyDataError
 from tqdm import tqdm
 
@@ -155,6 +162,54 @@ def clean_positions(path):
     long = long.reset_index(drop=True)
 
     return long
+
+
+def clean_cashflows(raw):
+
+    clean = raw.rename(
+        columns={
+            CashflowsRaw.DELTA: Cashflows.DELTA_CCY,
+            CashflowsRaw.UNNAMED_DELTA: Cashflows.DELTA,
+            CashflowsRaw.AMOUNT: Cashflows.AMOUNT_CCY,
+            CashflowsRaw.UNNAMED_AMOUNT: Cashflows.AMOUNT,
+            CashflowsRaw.DATE_VALUE: Cashflows.DATE_VALUE,
+            CashflowsRaw.DATE: Cashflows.DATE,
+            CashflowsRaw.TIME: Cashflows.TIME,
+            CashflowsRaw.PRODUCT: Positions.NAME,
+            CashflowsRaw.TYPE: Cashflows.TYPE,
+            CashflowsRaw.ID: Cashflows.ID,
+            CashflowsRaw.DESCRIPTION: Cashflows.DESCRIPTION,
+        }
+    )
+
+    # -------------------------------------------------------------------------
+    # Convert to float
+    columns_commas = [Cashflows.DELTA, Cashflows.AMOUNT]
+    clean[columns_commas] = replace_values(clean[columns_commas], old=",", new=".")
+    clean[columns_commas] = clean[columns_commas].astype(float)
+
+    # -------------------------------------------------------------------------
+    # Convert to date
+    columns_date = [Cashflows.DATE, Cashflows.DATE_VALUE]
+    for col in columns_date:
+        clean[col] = pd.to_datetime(
+            clean[col],
+            dayfirst=True,
+            errors="coerce",
+            format="%d-%m-%Y",
+        )
+
+    # -------------------------------------------------------------------------
+    # Find buy and sell CFs
+    type_pairs = [
+        (CashflowType.RAW_COMPRA, CashflowType.BUY),
+        (CashflowType.RAW_VENTA, CashflowType.SELL),
+    ]
+    for type_raw, type_clean in type_pairs:
+        mask = clean[Cashflows.DESCRIPTION].str.contains(type_raw)
+        clean.loc[mask, Cashflows.TYPE] = type_clean
+
+    return clean
 
 
 def positions_raw_to_clean(raw_positions):
