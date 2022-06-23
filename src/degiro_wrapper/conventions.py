@@ -95,6 +95,8 @@ class TransactionsRaw:
 
     SHARES = "Número"
 
+    ISIN = "ISIN"
+
     DATE = "Fecha"
     TIME = "Hora"
     PRODUCT = "Producto"
@@ -107,7 +109,6 @@ class Transactions:
     EXCHANGE = "exchange"
     EXECUTION = "exchangeExecution"
     RATE = "fxRate"
-    AMOUNT_CCY = "amountCcy"
     SHARES = "shares"
 
     PRICE = "price"
@@ -125,8 +126,18 @@ class Transactions:
     TOTAL = "total"
     TOTAL_CCY = "totalCcy"
 
+    ISIN = Positions.ISIN
+
     DATE = "date"
     DATE_VALUE = "dateValue"
     TIME = "time"
     TYPE = "type"
     ID = "id"
+
+
+class Calculations:
+
+    TNA = "tna"
+    CFS = "cfs"
+    RETURN_DAILY = "returnDaily"
+    RETURN_TOTAL = "returnTotal"
