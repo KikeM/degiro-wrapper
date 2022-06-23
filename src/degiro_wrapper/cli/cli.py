@@ -6,9 +6,14 @@ import pandas as pd
 from degiro_wrapper.core.api_methods import (
     download_cashflows_raw,
     download_positions_raw,
+    download_transactions_raw,
     get_login_data,
 )
-from degiro_wrapper.core.preprocess import clean_cashflows, clean_positions
+from degiro_wrapper.core.preprocess import (
+    clean_cashflows,
+    clean_positions,
+    clean_transactions,
+)
 from degiro_wrapper.core.utils import create_ytd_calendar
 
 
@@ -148,6 +153,69 @@ def download_cashflows(path, start, end, dry):
     type=str,
     default=".",
     required=True,
+    help="Path to download transactions file.",
+)
+@click.option(
+    "--start",
+    "-s",
+    "start",
+    type=str,
+    required=True,
+    help="Starting date.",
+)
+@click.option(
+    "--end",
+    "-e",
+    "end",
+    type=str,
+    default="today",
+    help="Ending date.",
+    show_default=True,
+)
+@click.option(
+    "--dry",
+    is_flag=True,
+    default=False,
+    help="Dry run.",
+)
+def download_transactions(path, start, end, dry):
+    """Download raw transactions from Degiro."""
+
+    click.echo("Downloading transactions ...")
+
+    start = pd.to_datetime(start)
+    end = pd.to_datetime(end)
+
+    start = start.strftime("%Y-%m-%d")
+    end = end.strftime("%Y-%m-%d")
+    path = Path(path)
+    click.echo(f"Start : {start}")
+    click.echo(f"End   : {end}")
+    click.echo(f"Path  : {path.absolute()}")
+
+    if not dry:
+        credentials = get_login_data()
+        download_transactions_raw(
+            credentials=credentials,
+            start=start,
+            end=end,
+            path=path,
+        )
+
+    if dry:
+        click.echo("Nothing done, end of dry run!")
+    else:
+        click.echo("Done!")
+
+
+@cli.command
+@click.option(
+    "--path",
+    "-p",
+    "path",
+    type=str,
+    default=".",
+    required=True,
     help="Path to check the positions files and dates.",
 )
 def check_missing_dates(path):
@@ -193,12 +261,14 @@ def create_db_positions(path, path_to):
     """Create positions database from raw positions folder."""
 
     path = Path(path)
-    click.echo(f"Cleaning raw positions from : {path.absolute()}")
 
     if path_to is None:
         path_to = path.parent
     path_to = Path(path_to) / "db_positions.csv"
-    click.echo(f"Dumping DB-positions to {path_to.absolute()}")
+
+    click.echo(f"Cleaning raw positions ...")
+    click.echo(f"From : {path.absolute()}")
+    click.echo(f"To   : {path_to.absolute()}")
 
     long = clean_positions(path)
     long.to_csv(path_to)
@@ -228,13 +298,49 @@ def create_db_cashflows(path, path_to):
     """Create DB-cashflows from raw cashflows file."""
 
     path = Path(path)
-    click.echo(f"Cleaning raw cashflows from : {path.absolute()}")
-
     path_to = Path(path_to) / "db_cashflows.csv"
-    click.echo(f"Dumping DB-cashflows to {path_to.absolute()}")
+
+    click.echo(f"Cleaning raw cashflows ...")
+    click.echo(f"From : {path.absolute()}")
+    click.echo(f"To   : {path_to.absolute()}")
 
     raw = pd.read_csv(path)
     cfs = clean_cashflows(raw)
     cfs.to_csv(path_to, index=False)
+
+    click.echo("Done!")
+
+
+@cli.command
+@click.option(
+    "--path",
+    "-p",
+    "path",
+    type=str,
+    required=True,
+    help="Path to extract positions.",
+)
+@click.option(
+    "--to",
+    "-t",
+    "path_to",
+    type=str,
+    required=False,
+    default=".",
+    help="Path to dump database. By default the parent of --path is used.",
+)
+def create_db_transactions(path, path_to):
+    """Create DB-transactions from raw transactions file."""
+
+    path = Path(path)
+    path_to = Path(path_to) / "db_transactions.csv"
+
+    click.echo("Cleaning raw transactions")
+    click.echo(f"From : {path.absolute()}")
+    click.echo(f"To   : {path_to.absolute()}")
+
+    raw = pd.read_csv(path)
+    transactions = clean_transactions(raw)
+    transactions.to_csv(path_to, index=False)
 
     click.echo("Done!")

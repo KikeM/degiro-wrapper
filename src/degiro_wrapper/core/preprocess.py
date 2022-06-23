@@ -9,6 +9,8 @@ from degiro_wrapper.conventions import (
     CashflowsRaw,
     Positions,
     PositionsRaw,
+    Transactions,
+    TransactionsRaw,
 )
 from pandas.errors import EmptyDataError
 from tqdm import tqdm
@@ -165,6 +167,16 @@ def clean_positions(path):
 
 
 def clean_cashflows(raw):
+    """Clean cashflows file.
+
+    Parameters
+    ----------
+    raw : pandas.DataFrame
+
+    Returns
+    -------
+    clean : pandas.DataFrame
+    """
 
     clean = raw.rename(
         columns={
@@ -208,6 +220,54 @@ def clean_cashflows(raw):
     for type_raw, type_clean in type_pairs:
         mask = clean[Cashflows.DESCRIPTION].str.contains(type_raw)
         clean.loc[mask, Cashflows.TYPE] = type_clean
+
+    return clean
+
+
+def clean_transactions(raw):
+    """Clean transactions file.
+
+    Parameters
+    ----------
+    raw : pandas.DataFrame
+
+    Returns
+    -------
+    clean : pandas.DataFrame
+    """
+
+    clean = raw.rename(
+        columns={
+            TransactionsRaw.EXCHANGE: Transactions.EXCHANGE,
+            TransactionsRaw.EXECUTION: Transactions.EXECUTION,
+            TransactionsRaw.RATE: Transactions.RATE,
+            TransactionsRaw.PRICE: Transactions.PRICE,
+            TransactionsRaw.UNNAMED_PRICE: Transactions.PRICE_CCY,
+            TransactionsRaw.VALUE_LOCAL: Transactions.VALUE_LOCAL,
+            TransactionsRaw.UNNAMED_VALUE_LOCAL: Transactions.VALUE_LOCAL_CCY,
+            TransactionsRaw.VALUE: Transactions.VALUE,
+            TransactionsRaw.UNNAMED_VALUE: Transactions.VALUE_CCY,
+            TransactionsRaw.TRANSACTION_COSTS: Transactions.TRANSACTION_COSTS,
+            TransactionsRaw.UNNAMED_COSTS: Transactions.TRANSACTION_COSTS_CCY,
+            TransactionsRaw.TOTAL: Transactions.TOTAL,
+            TransactionsRaw.UNNAMED_TOTAL: Transactions.TOTAL_CCY,
+            TransactionsRaw.DATE: Transactions.DATE,
+            TransactionsRaw.TIME: Transactions.TIME,
+            TransactionsRaw.PRODUCT: Positions.NAME,
+            TransactionsRaw.TYPE: Transactions.TYPE,
+            TransactionsRaw.ID: Transactions.ID,
+            TransactionsRaw.SHARES: Transactions.SHARES,
+        }
+    )
+
+    # -------------------------------------------------------------------------
+    # Convert to date
+    clean[Transactions.DATE] = pd.to_datetime(
+        clean[Transactions.DATE],
+        dayfirst=True,
+        errors="coerce",
+        format="%d-%m-%Y",
+    )
 
     return clean
 

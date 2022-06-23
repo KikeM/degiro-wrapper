@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+## [0.5.0] - 23/06/22
+
+ENH: Download and process transactions
+
 ## [0.4.0] - 23/06/22
 
 ENH: Create Cashflows DB
