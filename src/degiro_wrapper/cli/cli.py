@@ -65,8 +65,8 @@ def download_positions(start, end, path, dry):
         today = today - pd.offsets.BDay(1)
     calendar = pd.date_range(freq="B", start=start, end=today)
 
-    start = calendar[0].strftime("%Y-%M-%d")
-    end = calendar[-1].strftime("%Y-%M-%d")
+    start = calendar[0].strftime("%Y-%m-%d")
+    end = calendar[-1].strftime("%Y-%m-%d")
     path = Path(path)
     click.echo(f"Start : {start}")
     click.echo(f"End   : {end}")

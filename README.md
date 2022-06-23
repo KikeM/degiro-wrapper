@@ -1,27 +1,45 @@
 # Welcome to the Degiro Wrapper
 Degiro broker wrapper and portfolio valuator.
 
-**Currently under heavy changes, stable releases will be put up soon**.
+*README under construction.*
 
-# How to install
+**Currently under changes, stable releases will be put up soon**.
+
+- [Welcome to the Degiro Wrapper](#welcome-to-the-degiro-wrapper)
+  - [How to install](#how-to-install)
+
+## How to install
 
 ```bash
-pip install -r requirements.txt
+pip install .
 ```
 
 ## How to use
 
-For the run `src/sandbox.ipynb`. When you call `get_login_data` 
-you will be prompted for your username and password (using getpass,
-so that your password won't show ;)
+This library creates a CLI, invoked with the command `degiro`.
 
-Cheers
-
-# Developper's corner
-Specific details for contribution are given.
-
-## How to build the requirements file
-If you carry out changes or use new libraries, you can easily update the `requirements.txt` file with the following command:
-```bash
-pipdeptree | grep '^\w' > requirements.txt
 ```
+$ degiro
+Usage: degiro [OPTIONS] COMMAND [ARGS]...
+
+Options:
+  --help  Show this message and exit.
+
+Commands:
+  check-missing-dates     Check missing dates YTD from raw positions.
+  create-db-cashflows     Create DB-cashflows from raw cashflows file.
+  create-db-positions     Create positions database from raw positions...
+  create-db-transactions  Create DB-transactions from raw transactions file.
+  describe
+  download-cashflows      Download raw cashflows from Degiro.
+  download-positions      Download raw positions from Degiro.
+  download-transactions   Download raw transactions from Degiro.
+  report                  Create general report.
+```
+Currently there is a basic report available with three time series:
+- Total Net Assets;
+- portfolio cashflows;
+- cumulative return in %.
+
+
+

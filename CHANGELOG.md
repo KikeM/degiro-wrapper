@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## [0.6.0] - 23/06/22
+
+ENH: Create report MVP
+
 ## [0.5.0] - 23/06/22
 
 ENH: Download and process transactions

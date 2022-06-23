@@ -257,6 +257,7 @@ def clean_transactions(raw):
             TransactionsRaw.TYPE: Transactions.TYPE,
             TransactionsRaw.ID: Transactions.ID,
             TransactionsRaw.SHARES: Transactions.SHARES,
+            TransactionsRaw.ISIN: Transactions.ISIN,
         }
     )
 
