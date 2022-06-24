@@ -7,6 +7,7 @@ Degiro broker wrapper and portfolio valuator.
 
 - [Welcome to the Degiro Wrapper](#welcome-to-the-degiro-wrapper)
   - [How to install](#how-to-install)
+  - [How to use](#how-to-use)
 
 ## How to install
 
@@ -14,7 +15,7 @@ Degiro broker wrapper and portfolio valuator.
 pip install .
 ```
 
-## How to use
+## How to use
 
 This library creates a CLI, invoked with the command `degiro`.
 
