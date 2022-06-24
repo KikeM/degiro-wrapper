@@ -218,7 +218,7 @@ def download_transactions(path, start, end, dry):
     required=True,
     help="Path to check the positions files and dates.",
 )
-def check_missing_dates(path):
+def check_dates(path):
     """Check missing dates YTD from raw positions."""
 
     path = Path(path)
