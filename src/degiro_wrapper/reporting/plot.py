@@ -1,16 +1,32 @@
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
-FIGKWARGS = dict(bbox_inches="tight", transparent=True)
+FIGKWARGS = dict(bbox_inches="tight", transparent=True, dpi=300)
 
 
-def plot_report(path, tna, cfs, return_total):
+def create_report_plots(path, tna, cfs, return_total):
+    """Create report plots.
+
+    Parameters
+    ----------
+    path : Path-like
+    tna : pandas.Series
+    cfs : pandas.Series
+    return_total : pandas.Series
+    """
 
     plot_tna_cfs(path=path, tna=tna, cfs=cfs)
     plot_return_total(path, return_total)
 
 
 def plot_return_total(path, return_total):
+    """Plot total cumulative return.
+
+    Parameters
+    ----------
+    path : Path-like
+    return_total : pandas.Series
+    """
 
     start = return_total.index[0].strftime("%Y-%m-%d")
     end = return_total.index[-1].strftime("%Y-%m-%d")
@@ -25,6 +41,14 @@ def plot_return_total(path, return_total):
 
 
 def plot_tna_cfs(path, tna, cfs):
+    """Plot TnA and Cashflows.
+
+    Parameters
+    ----------
+    path : Path-like
+    tna : pandas.Series
+    cfs : pandas.Series
+    """
 
     start = tna.index[0].strftime("%Y-%m-%d")
     end = tna.index[-1].strftime("%Y-%m-%d")

@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.1] - 24/06/22
+
+CLN: Minor improvements after user-like usage:
+  - Set `dpi` value for figure generation.
+  - Simplify CLI command `check-missing-dates` to `check-dates`.
+  - Refactor function names.
 
 ## [0.6.0] - 23/06/22
 

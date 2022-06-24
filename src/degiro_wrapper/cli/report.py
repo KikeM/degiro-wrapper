@@ -10,7 +10,7 @@ from degiro_wrapper.reporting.calculations import (
     compute_return_total,
     compute_tna,
 )
-from degiro_wrapper.reporting.plot import plot_report
+from degiro_wrapper.reporting.plot import create_report_plots
 from degiro_wrapper.reporting.utils import filter_positions, filter_transactions
 
 from .cli import cli
@@ -60,7 +60,7 @@ from .cli import cli
     help="End date.",
 )
 @click.option(
-    "--path_rp",
+    "--pr",
     "path_rp",
     type=str,
     required=False,
@@ -70,14 +70,21 @@ from .cli import cli
 def report(path_ps, path_tr, path_pf, start, end, path_rp):
     """Create general report."""
 
+    click.echo("Creating report ...")
+
     path_ps = Path(path_ps)
     path_tr = Path(path_tr)
     path_pf = Path(path_pf)
+    path_rp = Path(path_rp)
 
+    # -------------------------------------------------------------------------
+    # Read data
     positions = pd.read_csv(path_ps, index_col=0, parse_dates=[Positions.DATE])
     transactions = pd.read_csv(path_tr, parse_dates=[Transactions.DATE])
     portfolio = pd.read_csv(path_pf, index_col=Positions.ISIN)
 
+    # -------------------------------------------------------------------------
+    # Parse period
     if start:
         start = pd.to_datetime(start)
     if end:
@@ -123,9 +130,14 @@ def report(path_ps, path_tr, path_pf, start, end, path_rp):
 
     # -------------------------------------------------------------------------
     # Create report
-    path_rp = Path(path_rp)
-
-    path_rp = path_rp / f"report_{_start}_{_end}"
+    path_rp = path_rp / f"report_{_end}_{_start}"
     path_rp.mkdir(exist_ok=True)
 
-    plot_report(path_rp, tna=tna, cfs=cfs, return_total=return_total)
+    create_report_plots(path_rp, tna=tna, cfs=cfs, return_total=return_total)
+
+    click.echo("Done!")
+
+    click.echo(f"Positions    : {path_ps.absolute()}")
+    click.echo(f"Transactions : {path_tr.absolute()}")
+    click.echo(f"Portfolio    : {path_pf.absolute()}")
+    click.echo(f"Report       : {path_rp.absolute()}")
