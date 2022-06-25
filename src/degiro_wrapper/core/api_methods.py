@@ -79,7 +79,7 @@ def get_session_id(username=None, password=None, config=False):
     # Request access
     _response = sess.post(url=url_login, headers=_header, data=_payload)
 
-    if _response.ok != True:
+    if not _response.ok:
         print(_response.text)
         raise SystemExit("Unable to retrive intAccount value.")
 
@@ -105,7 +105,7 @@ def get_int_account(session_id=None):
 
     _response = sess.get(url=url_info_client, params=_payload)
 
-    if _response.ok != True:
+    if not _response.ok:
         print(_response.text)
         raise SystemExit("Unable to retrive intAccount value.")
 

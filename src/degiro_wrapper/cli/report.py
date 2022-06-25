@@ -1,7 +1,6 @@
 from pathlib import Path
 
 import click
-import matplotlib.pyplot as plt
 import pandas as pd
 from degiro_wrapper.conventions import Positions, Transactions
 from degiro_wrapper.reporting.calculations import (
@@ -11,7 +10,10 @@ from degiro_wrapper.reporting.calculations import (
     compute_tna,
 )
 from degiro_wrapper.reporting.plot import create_report_plots
-from degiro_wrapper.reporting.utils import filter_positions, filter_transactions
+from degiro_wrapper.reporting.utils import (
+    filter_positions,
+    filter_transactions,
+)
 
 from .cli import cli
 

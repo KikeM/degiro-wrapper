@@ -13,7 +13,9 @@ def compute_tna(positions):
 
 def compute_cfs(transactions):
 
-    cfs = transactions.groupby(Transactions.DATE)[Transactions.VALUE_LOCAL].sum()
+    cfs = transactions.groupby(Transactions.DATE)[
+        Transactions.VALUE_LOCAL
+    ].sum()
     cfs = cfs.squeeze()
 
     # In the original file, buying is negative from the cash amount,

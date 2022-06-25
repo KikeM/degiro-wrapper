@@ -1,6 +1,3 @@
-from turtle import position
-
-
 FILENAME_POSITIONS = "positions_%Y-%m-%d"
 
 
