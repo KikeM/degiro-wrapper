@@ -3,6 +3,7 @@ from setuptools import setup, find_packages
 setup(
     name="degiro-wrapper",
     install_requires=[
+        "requests",
         "click",
         "openpyxl",
         "pandas",
