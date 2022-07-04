@@ -28,7 +28,7 @@ def extract_numbers(frame):
     frame : pandas.DataFrame
     """
     numeric_const_pattern = (
-        "[-+]? (?: (?: \d* \. \d+ ) | (?: \d+ \.? ) )(?: [Ee] [+-]? \d+ ) ?"
+        r"[-+]? (?: (?: \d* \. \d+ ) | (?: \d+ \.? ) )(?: [Ee] [+-]? \d+ ) ?"
     )
     rx = re.compile(numeric_const_pattern, re.VERBOSE)
     frame = frame.applymap(lambda x: rx.findall(x)[0])
@@ -118,11 +118,15 @@ def clean_positions(path):
             PositionsRaw.VALUE_EUR,
             PositionsRaw.VALUE_LOCAL,
         ]
-        positions_day[columns_to_float] = positions_day[columns_to_float].astype(float)
+        positions_day[columns_to_float] = positions_day[
+            columns_to_float
+        ].astype(float)
 
         columns_to_string = [PositionsRaw.ISIN, PositionsRaw.PRODUCT]
         positions_day = positions_day.fillna("-")
-        positions_day[columns_to_string] = positions_day[columns_to_string].astype(str)
+        positions_day[columns_to_string] = positions_day[
+            columns_to_string
+        ].astype(str)
         positions_day = positions_day.replace("-", np.nan)
 
         # ---------------------------------------------------------------------
@@ -197,7 +201,9 @@ def clean_cashflows(raw):
     # -------------------------------------------------------------------------
     # Convert to float
     columns_commas = [Cashflows.DELTA, Cashflows.AMOUNT]
-    clean[columns_commas] = replace_values(clean[columns_commas], old=",", new=".")
+    clean[columns_commas] = replace_values(
+        clean[columns_commas], old=",", new="."
+    )
     clean[columns_commas] = clean[columns_commas].astype(float)
 
     # -------------------------------------------------------------------------
@@ -294,9 +300,15 @@ def positions_raw_to_clean(raw_positions):
     -----
     It does not contain the returns of the cash position.
     """
-    amount_df = raw_positions.pivot(index="date", columns="ISIN", values="amount")
-    prices_df = raw_positions.pivot(index="date", columns="ISIN", values="price")
-    shares_df = raw_positions.pivot(index="date", columns="ISIN", values="shares")
+    amount_df = raw_positions.pivot(
+        index="date", columns="ISIN", values="amount"
+    )
+    prices_df = raw_positions.pivot(
+        index="date", columns="ISIN", values="price"
+    )
+    shares_df = raw_positions.pivot(
+        index="date", columns="ISIN", values="shares"
+    )
 
     # Compute share-adjusted values
     nav_df = (amount_df / shares_df).dropna(axis=1, how="all")

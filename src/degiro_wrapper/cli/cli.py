@@ -74,7 +74,9 @@ def download_positions(start, end, path, dry):
 
     if not dry:
         credentials = get_login_data()
-        download_positions_raw(path=path, calendar=calendar, credentials=credentials)
+        download_positions_raw(
+            path=path, calendar=calendar, credentials=credentials
+        )
 
     if dry:
         click.echo("Nothing done, end of dry run!")
@@ -266,7 +268,7 @@ def create_db_positions(path, path_to):
         path_to = path.parent
     path_to = Path(path_to) / "db_positions.csv"
 
-    click.echo(f"Cleaning raw positions ...")
+    click.echo("Cleaning raw positions ...")
     click.echo(f"From : {path.absolute()}")
     click.echo(f"To   : {path_to.absolute()}")
 
@@ -300,7 +302,7 @@ def create_db_cashflows(path, path_to):
     path = Path(path)
     path_to = Path(path_to) / "db_cashflows.csv"
 
-    click.echo(f"Cleaning raw cashflows ...")
+    click.echo("Cleaning raw cashflows ...")
     click.echo(f"From : {path.absolute()}")
     click.echo(f"To   : {path_to.absolute()}")
 
