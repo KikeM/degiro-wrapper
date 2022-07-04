@@ -81,9 +81,18 @@ def report(path_ps, path_tr, path_pf, start, end, path_rp):
 
     # -------------------------------------------------------------------------
     # Read data
-    positions = pd.read_csv(path_ps, index_col=0, parse_dates=[Positions.DATE])
-    transactions = pd.read_csv(path_tr, parse_dates=[Transactions.DATE])
-    portfolio = pd.read_csv(path_pf, index_col=Positions.ISIN)
+    positions = pd.read_csv(
+        path_ps,
+        index_col=0,
+        skipinitialspace=True,
+        parse_dates=[Positions.DATE],
+    )
+    transactions = pd.read_csv(
+        path_tr, skipinitialspace=True, parse_dates=[Transactions.DATE]
+    )
+    portfolio = pd.read_csv(
+        path_pf, skipinitialspace=True, index_col=Positions.ISIN
+    )
 
     # -------------------------------------------------------------------------
     # Parse period
