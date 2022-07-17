@@ -1,7 +1,11 @@
+from concurrent import futures
+from itertools import product
+
 import configparser
 import getpass
 import json
 import pathlib
+from typing import Callable, Iterable
 import urllib.request
 
 import pandas as pd
@@ -160,20 +164,56 @@ def download_positions_raw(
         By default 'positions_%Y-%m-%d',
         see degiro_wrapper.conventions::FILENAME_POSITIONS
     """
-    for date in tqdm.tqdm(calendar):
+    iterable = product(calendar, [path], [credentials], [filename_template])
+    multithread(_download_positions, iterable, total=len(calendar))
 
-        filename = date.strftime(filename_template) + ".csv"
 
-        url_formatted = url_positions.format(
-            int_account=credentials[Credentials.ACCOUNT_ID],
-            session_id=credentials[Credentials.SESSION_ID],
-            day=date.strftime("%d"),
-            month=date.strftime("%m"),
-            year=date.strftime("%Y"),
-        )
+def _download_positions(args):
+    """Download a single file.
 
-        _path = path / filename
-        urllib.request.urlretrieve(url_formatted, _path)
+    Parameters
+    ----------
+    args : tuple
+        In order to be compatible con multithread function args must be a tuple
+        which it's unpackaged inside the function.
+    """
+    date, path, credentials, filename_template = args
+    url_formatted = url_positions.format(
+        int_account=credentials[Credentials.ACCOUNT_ID],
+        session_id=credentials[Credentials.SESSION_ID],
+        day=date.strftime("%d"),
+        month=date.strftime("%m"),
+        year=date.strftime("%Y"),
+    )
+
+    filename = date.strftime(filename_template) + ".csv"
+    _path = path / filename
+
+    urllib.request.urlretrieve(url_formatted, _path)
+
+
+def multithread(func: Callable, iterable: Iterable, total: int) -> None:
+    """Execute a function using multithreading.
+
+    Parameters
+    ----------
+    func : function
+        Function to call in differents threads.
+    iterable : iterable
+        Iterable object passed as one argument to `func`.
+    total : int
+        tqdm's argument which set the total size of the iterable for better
+        progress bar.
+
+    Returns
+    -------
+    None
+        This functio doesn't returns anything.
+    """
+    with futures.ThreadPoolExecutor() as executor:
+        res = executor.map(func, iterable)
+        for _ in tqdm.tqdm(res, total=total):
+            pass
 
 
 def download_cashflows_raw(credentials, start, end, path):
