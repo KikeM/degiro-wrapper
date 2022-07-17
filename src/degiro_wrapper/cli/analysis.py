@@ -25,6 +25,7 @@ from .cli import cli
     help="Path products list.",
 )
 def describe(path_db, path_products):
+    """Create list of products to define portfolio from positions database."""
 
     path_db = Path(path_db)
     path_products = Path(path_products)
@@ -35,4 +36,4 @@ def describe(path_db, path_products):
     products = products.drop_duplicates()
 
     path_products = path_products / "products.csv"
-    products.to_csv(path_products)
+    products.to_csv(path_products, index=False)

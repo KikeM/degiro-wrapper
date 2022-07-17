@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.3] - 17/07/22
+
+- CLN: Modify degiro describe entrypoint to be used 
+to create portfolio definition.
+
 ## [0.6.2] - 17/07/22
 
 - ENH: make download_position 100x faster
