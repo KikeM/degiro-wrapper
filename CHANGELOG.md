@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.2] - 17/07/22
+
+- ENH: make download_position 100x faster
+- ENH(report): avoid parse spaces when it reads a csv
+
+Thanks to @mmngreco
+
 ## [0.6.1] - 24/06/22
 
 CLN: Minor improvements after user-like usage:
