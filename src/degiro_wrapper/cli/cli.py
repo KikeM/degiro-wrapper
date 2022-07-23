@@ -74,9 +74,7 @@ def download_positions(start, end, path, dry):
 
     if not dry:
         credentials = get_login_data()
-        download_positions_raw(
-            path=path, calendar=calendar, credentials=credentials
-        )
+        download_positions_raw(path=path, calendar=calendar, credentials=credentials)
 
     if dry:
         click.echo("Nothing done, end of dry run!")
@@ -342,6 +340,7 @@ def create_db_transactions(path, path_to):
     click.echo(f"To   : {path_to.absolute()}")
 
     raw = pd.read_csv(path)
+    # breakpoint()
     transactions = clean_transactions(raw)
     transactions.to_csv(path_to, index=False)
 

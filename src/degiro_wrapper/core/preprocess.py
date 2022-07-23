@@ -118,15 +118,11 @@ def clean_positions(path):
             PositionsRaw.VALUE_EUR,
             PositionsRaw.VALUE_LOCAL,
         ]
-        positions_day[columns_to_float] = positions_day[
-            columns_to_float
-        ].astype(float)
+        positions_day[columns_to_float] = positions_day[columns_to_float].astype(float)
 
         columns_to_string = [PositionsRaw.ISIN, PositionsRaw.PRODUCT]
         positions_day = positions_day.fillna("-")
-        positions_day[columns_to_string] = positions_day[
-            columns_to_string
-        ].astype(str)
+        positions_day[columns_to_string] = positions_day[columns_to_string].astype(str)
         positions_day = positions_day.replace("-", np.nan)
 
         # ---------------------------------------------------------------------
@@ -201,9 +197,7 @@ def clean_cashflows(raw):
     # -------------------------------------------------------------------------
     # Convert to float
     columns_commas = [Cashflows.DELTA, Cashflows.AMOUNT]
-    clean[columns_commas] = replace_values(
-        clean[columns_commas], old=",", new="."
-    )
+    clean[columns_commas] = replace_values(clean[columns_commas], old=",", new=".")
     clean[columns_commas] = clean[columns_commas].astype(float)
 
     # -------------------------------------------------------------------------
@@ -251,7 +245,7 @@ def clean_transactions(raw):
             TransactionsRaw.UNNAMED_PRICE: Transactions.PRICE_CCY,
             TransactionsRaw.VALUE_LOCAL: Transactions.VALUE_LOCAL,
             TransactionsRaw.UNNAMED_VALUE_LOCAL: Transactions.VALUE_LOCAL_CCY,
-            TransactionsRaw.VALUE: Transactions.VALUE,
+            TransactionsRaw.VALUE: Transactions.VALUE_PORTFOLIO,
             TransactionsRaw.UNNAMED_VALUE: Transactions.VALUE_CCY,
             TransactionsRaw.TRANSACTION_COSTS: Transactions.TRANSACTION_COSTS,
             TransactionsRaw.UNNAMED_COSTS: Transactions.TRANSACTION_COSTS_CCY,
@@ -300,15 +294,9 @@ def positions_raw_to_clean(raw_positions):
     -----
     It does not contain the returns of the cash position.
     """
-    amount_df = raw_positions.pivot(
-        index="date", columns="ISIN", values="amount"
-    )
-    prices_df = raw_positions.pivot(
-        index="date", columns="ISIN", values="price"
-    )
-    shares_df = raw_positions.pivot(
-        index="date", columns="ISIN", values="shares"
-    )
+    amount_df = raw_positions.pivot(index="date", columns="ISIN", values="amount")
+    prices_df = raw_positions.pivot(index="date", columns="ISIN", values="price")
+    shares_df = raw_positions.pivot(index="date", columns="ISIN", values="shares")
 
     # Compute share-adjusted values
     nav_df = (amount_df / shares_df).dropna(axis=1, how="all")

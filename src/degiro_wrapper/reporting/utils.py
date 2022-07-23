@@ -66,7 +66,6 @@ def filter_transactions(transactions, isins, start=None, end=None):
         Transactions.EXECUTION,
         Transactions.ID,
         Transactions.RATE,
-        Transactions.VALUE,
         Transactions.VALUE_CCY,
         Transactions.PRICE_CCY,
         Transactions.TOTAL,

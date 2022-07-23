@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.4] - 23/07/22
+
+ENH: Compute tna and cfs with multicurrency positions
+
 ## [0.6.3] - 17/07/22
 
 - CLN: Modify degiro describe entrypoint to be used 

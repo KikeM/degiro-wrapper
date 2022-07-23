@@ -114,8 +114,8 @@ class Transactions:
     VALUE_LOCAL = Positions.VALUE_LOCAL
     VALUE_LOCAL_CCY = VALUE_LOCAL + "Ccy"
 
-    VALUE = Positions.VALUE_PORTFOLIO
-    VALUE_CCY = VALUE + "Ccy"
+    VALUE_PORTFOLIO = Positions.VALUE_PORTFOLIO
+    VALUE_CCY = VALUE_PORTFOLIO + "Ccy"
 
     TRANSACTION_COSTS = "costsTransaction"
     TRANSACTION_COSTS_CCY = "costsTransactionCcy"
