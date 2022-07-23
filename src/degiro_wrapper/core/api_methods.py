@@ -208,7 +208,7 @@ def multithread(func: Callable, iterable: Iterable, total: int) -> None:
     Returns
     -------
     None
-        This functio doesn't returns anything.
+        This function doesn't returns anything.
     """
     with futures.ThreadPoolExecutor() as executor:
         res = executor.map(func, iterable)

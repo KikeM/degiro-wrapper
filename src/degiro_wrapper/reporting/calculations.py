@@ -3,7 +3,7 @@ from degiro_wrapper.conventions import Positions, Transactions, Calculations
 
 def compute_tna(positions):
 
-    tna = positions.groupby(Positions.DATE)[Positions.VALUE_LOCAL].sum()
+    tna = positions.groupby(Positions.DATE)[Positions.VALUE_PORTFOLIO].sum()
     tna = tna.squeeze()
 
     tna.name = Calculations.TNA
@@ -13,9 +13,7 @@ def compute_tna(positions):
 
 def compute_cfs(transactions):
 
-    cfs = transactions.groupby(Transactions.DATE)[
-        Transactions.VALUE_LOCAL
-    ].sum()
+    cfs = transactions.groupby(Transactions.DATE)[Transactions.VALUE_PORTFOLIO].sum()
     cfs = cfs.squeeze()
 
     # In the original file, buying is negative from the cash amount,
