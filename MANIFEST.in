@@ -1,0 +1,2 @@
+include versioneer.py
+include src/degiro_wrapper/_version.py
