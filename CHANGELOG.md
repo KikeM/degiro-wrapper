@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.5] - 24/07/22
+
+ENH: Add versioneer
+
 ## [0.6.4] - 23/07/22
 
 ENH: Compute tna and cfs with multicurrency positions
